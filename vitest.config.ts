@@ -10,12 +10,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: [
-        'src/assets/**/*.ts',
-        'src/components/**/*.ts',
-        'src/composable/**/*.ts',
-        'src/modules/**/*.ts'
-      ],
+      include: ['src/assets/**/*.ts', 'src/components/**/*.ts', 'src/composable/**/*.ts', 'src/modules/**/*.ts'],
       exclude: ['src/**/index.ts', 'src/**/types.ts', 'src/**/*.test.ts', 'src/routes/+types/**'],
     },
   },
