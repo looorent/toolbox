@@ -1,0 +1,50 @@
+{
+  "name": "toolbox",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix .",
+    "build-only": "vite build",
+    "build": "pnpm run type-check && pnpm run build-only",
+    "preview": "pnpm run build && wrangler dev",
+    "type-check": "vue-tsc --build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "deploy": "pnpm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "4.1.18",
+    "anpr-wiegand": "1.0.2",
+    "colord": "2.9.3",
+    "he": "1.2.0",
+    "jsonrepair": "3.13.2",
+    "qr-scanner": "1.4.2",
+    "qrcode": "1.5.4",
+    "tailwindcss": "4.1.18",
+    "vue": "3.5.28",
+    "vue-router": "5.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.2",
+    "@cloudflare/vite-plugin": "1.25.1",
+    "@tsconfig/node24": "24.0.4",
+    "@types/he": "1.2.3",
+    "@types/node": "25.2.3",
+    "@types/qrcode": "1.5.6",
+    "@vitejs/plugin-vue": "6.0.4",
+    "@vue/tsconfig": "0.8.1",
+    "typescript": "5.9.3",
+    "vite": "7.3.1",
+    "vite-plugin-pwa": "1.2.0",
+    "vite-plugin-vue-devtools": "8.0.6",
+    "vitest": "4.0.18",
+    "vue-tsc": "3.2.4",
+    "wrangler": "4.66.0"
+  }
+}

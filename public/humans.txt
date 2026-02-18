@@ -1,0 +1,22 @@
+/* TEAM */
+Developer: Lorent Lempereur
+Website: https://github.com/looorent
+
+/* THANKS */
+The Open Source Community
+
+/* TECHNOLOGY COLOPHON */
+HTML5, CSS3
+JavaScript (TypeScript)
+Vue 3 (Composition API)
+Vite 7
+Tailwind CSS 4
+Cloudflare Workers
+Biome (Linting & Formatting)
+Vitest (Testing)
+Winston (Logging)
+
+/* SOFTWARE */
+Browser: Modern Browsers
+Components: Vue, Vue Router, PWA
+Libraries: colord, qrcode, qr-scanner, he, jsonrepair, anpr-wiegand
