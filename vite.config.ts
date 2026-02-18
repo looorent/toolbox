@@ -12,7 +12,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['toolbox.svg'],
+      includeAssets: ['logo.svg'],
       manifest: {
         name: 'Dev Toolbox',
         short_name: 'Toolbox',
