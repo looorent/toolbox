@@ -19,23 +19,23 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
-    "@tailwindcss/vite": "4.1.18",
+    "@tailwindcss/vite": "4.2.1",
     "anpr-wiegand": "1.0.2",
     "colord": "2.9.3",
     "he": "1.2.0",
     "jsonrepair": "3.13.2",
     "qr-scanner": "1.4.2",
     "qrcode": "1.5.4",
-    "tailwindcss": "4.1.18",
+    "tailwindcss": "4.2.1",
     "vue": "3.5.28",
-    "vue-router": "5.0.2"
+    "vue-router": "5.0.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
-    "@cloudflare/vite-plugin": "1.25.1",
+    "@biomejs/biome": "2.4.4",
+    "@cloudflare/vite-plugin": "1.25.4",
     "@tsconfig/node24": "24.0.4",
     "@types/he": "1.2.3",
-    "@types/node": "25.2.3",
+    "@types/node": "25.3.0",
     "@types/qrcode": "1.5.6",
     "@vitejs/plugin-vue": "6.0.4",
     "@vitest/coverage-v8": "4.0.18",
@@ -47,7 +47,7 @@
     "vite-plugin-pwa": "1.2.0",
     "vite-plugin-vue-devtools": "8.0.6",
     "vitest": "4.0.18",
-    "vue-tsc": "3.2.4",
-    "wrangler": "4.66.0"
+    "vue-tsc": "3.2.5",
+    "wrangler": "4.68.0"
   }
 }
