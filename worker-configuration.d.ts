@@ -5,7 +5,13 @@ declare namespace Cloudflare {
   interface GlobalProps {
     mainModule: typeof import('./server/index')
   }
-  type Env = {}
+  type Env = {
+    KV: KVNamespace
+    WEBHOOK_TTL_SECONDS: string
+    WEBHOOK_RATE_LIMIT_PER_DAY: string
+    RATE_LIMIT_WINDOW_SECONDS: string
+    PAGE_SIZE: string
+  }
 }
 interface Env extends Cloudflare.Env {}
 

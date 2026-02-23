@@ -14,8 +14,9 @@
       "@components/*": ["src/components/*"],
       "@composables/*": ["src/composables/*"],
       "@modules/*": ["src/modules/*"],
+      "@shared/*": ["shared/*"],
       "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["server/**/*.ts", "worker-configuration.d.ts"]
+  "include": ["server/**/*.ts", "shared/**/*.ts", "worker-configuration.d.ts"]
 }

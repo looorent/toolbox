@@ -83,6 +83,5 @@ pnpm deploy
 ### Next? TODO
 
 * [Feature] A "POST redirect" page that allows to POST auth workflows (for example) to show the entire payload
-* [Feature] A Webhook.site
 * [Technical] Create components and design system? (like "button")
 * [Technical] E2E Tests

@@ -16,9 +16,10 @@
       "@components/*": ["src/components/*"],
       "@composables/*": ["src/composables/*"],
       "@modules/*": ["src/modules/*"],
+      "@shared/*": ["shared/*"],
       "@utils/*": ["src/utils/*"]
     }
   },
-  "include": ["env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "shared/**/*.ts"],
   "exclude": ["src/**/__tests__/*"]
 }

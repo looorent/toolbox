@@ -1,4 +1,4 @@
-import { logger } from '@/utils/logger'
+import { logger } from '@shared/utils/logger'
 
 const MIME_MAP: Record<string, string> = {
   '/9j/': 'image/jpeg',

@@ -1,4 +1,4 @@
-import { logger } from '@/utils/logger'
+import { logger } from '@shared/utils/logger'
 import type { Base64Variant } from './types'
 
 export function encode(text: string, variant: Base64Variant): string {

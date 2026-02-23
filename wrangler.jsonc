@@ -23,4 +23,17 @@
 			"custom_domain": true
 		}
 	],
+	"kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "8a52ca67f9cf4a61900dbb4ae01dff4e",
+      "preview_id": "6ea2224647534fffb3222621d72856a8"
+    }
+	],
+	"vars": {
+		"WEBHOOK_TTL_SECONDS": "2592000",
+		"WEBHOOK_RATE_LIMIT_PER_DAY": "10000",
+		"RATE_LIMIT_WINDOW_SECONDS": "86401",
+		"PAGE_SIZE": "25"
+	},
 }

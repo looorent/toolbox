@@ -16,7 +16,7 @@ const { copy, copied } = useCopy()
 <template>
   <button
     type="button"
-    class="px-2 py-1 text-[10px] rounded transition-colors"
+    class="px-2 py-1 text-[10px] rounded transition-colors cursor-pointer"
     :class="copied ? 'text-success font-medium' : 'text-text-muted hover:text-text-primary'"
     @click="copy(value)"
   >

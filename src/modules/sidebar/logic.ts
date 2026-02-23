@@ -42,6 +42,7 @@ export const sections: Section[] = [
     tools: [
       { path: '/xor', name: 'XOR Checksum', abbreviation: 'XOR' },
       { path: '/svg-path', name: 'SVG Path Visualizer', abbreviation: 'SVG' },
+      { path: '/webhook', name: 'Webhook Catcher', abbreviation: 'WHK' },
     ],
   },
   {

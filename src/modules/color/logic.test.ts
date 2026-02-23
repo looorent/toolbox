@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createColorInstance, getColorFormats, getColorPalette } from './logic'
 
-// ── createColorInstance ──────────────────────────────────────
-
 describe('createColorInstance', () => {
   it('creates instance from hex color', () => {
     expect(createColorInstance('#ff0000')).not.toBeNull()
@@ -32,8 +30,6 @@ describe('createColorInstance', () => {
     expect(createColorInstance('')).toBeNull()
   })
 })
-
-// ── getColorFormats ──────────────────────────────────────────
 
 describe('getColorFormats', () => {
   it('returns hex in uppercase', () => {
@@ -107,8 +103,6 @@ describe('getColorFormats', () => {
     expect(formats.contrastColor).toBe('#000000')
   })
 })
-
-// ── getColorPalette ──────────────────────────────────────────
 
 describe('getColorPalette', () => {
   it('returns a complementary color', () => {
