@@ -1,3 +1,4 @@
+import { buildWebhookOpenApiSpec } from '@shared/modules/webhook/openapi'
 import { logger } from '@shared/utils/logger'
 import { buildWebhook, buildWebhookRequest, checkRateLimit, RATE_LIMIT_PER_DAY, scrubHeaders, secondsUntilMidnightUtc } from './logic'
 import {
@@ -40,6 +41,15 @@ export async function listWebhookRequests(env: Env, id: string, url: URL): Promi
     logger.warn('[GET Webhook requests] Not Found with id "%s"', id)
     return allowResponse({ error: 'webhook_not_found' }, 404)
   }
+}
+
+export async function getWebhookOpenApiSpec(env: Env, id: string, requestUrl: URL): Promise<Response> {
+  const webhook = await findWebhook(env, id)
+  if (!webhook) {
+    return allowResponse({ error: 'webhook_not_found' }, 404)
+  }
+  const spec = buildWebhookOpenApiSpec(`${requestUrl.origin}/hooks/${id}`)
+  return allowResponse(spec)
 }
 
 export async function deleteWebhook(env: Env, id: string): Promise<Response> {

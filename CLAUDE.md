@@ -164,6 +164,35 @@ if (condition) {
 if (condition) doSomething()
 ```
 
+## SCIM module
+
+The SCIM tool (`src/modules/scim/` + `server/modules/scim/`) is a full SCIM 2.0 server backed by Cloudflare D1 (SQLite). It is significantly more complex than other tools because it has a database, a public API, scheduled jobs, and bearer token authentication.
+
+### Dual API surface
+
+| Surface | Prefix | Auth | Purpose |
+|---------|--------|------|---------|
+| Management API | `/api/scim-servers/...` | None (UI backend) | CRUD for servers, users, groups from the Vue frontend |
+| SCIM API | `/scim/:serverId/v2/...` | Bearer token | RFC 7644 endpoints consumed by identity providers (Okta, Entra ID) |
+
+The management API is the Vue app's backend — it creates/deletes servers and manages data through a simplified JSON interface. The SCIM API is the standards-compliant surface that external IdPs provision against. Both share the same repository layer.
+
+### Database schema (D1)
+
+Four tables: `scim_server`, `scim_user`, `scim_group`, `scim_group_member`. Users and groups cascade-delete when their server is deleted. Group membership is a join table with a composite primary key. Migrations live in `drizzle/migrations/` and are applied by Wrangler on deploy.
+
+### Authentication
+
+Each server gets a bearer token (`crypto.randomUUID()`) at creation time. The token is returned once in the create response and stored in the DB but never returned by `findServer()` (show-once design). All SCIM API requests are validated against the stored token using constant-time comparison. The management API is unauthenticated.
+
+### Stale server cleanup
+
+A Cloudflare cron trigger (`scheduled` handler in `server/index.ts`) calls `deleteStaleServers()`, which deletes servers whose `last_used_at` (or `created_at` if never used) is older than 2 months. `last_used_at` is updated via `waitUntil()` on every SCIM API request.
+
+### Local development
+
+`pnpm run dev` starts Vite with HMR for the frontend. `pnpm run preview` builds and runs a local Wrangler preview with a local D1 database (Miniflare). The D1 binding is configured in `wrangler.jsonc`. Tests for pure logic live in `server/modules/scim/logic.test.ts` and run with Vitest.
+
 ## Key libraries
 
 | Library | Used in |

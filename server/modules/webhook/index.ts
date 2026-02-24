@@ -3,5 +3,6 @@ export {
   createWebhook,
   deleteWebhook,
   getWebhook,
+  getWebhookOpenApiSpec,
   listWebhookRequests,
 } from './handlers'

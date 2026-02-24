@@ -6,6 +6,7 @@ import { createWebhook, deleteWebhook, fetchRequests, fetchWebhook, getWebhookUr
 import WebhookLanding from './WebhookLanding.vue'
 import WebhookRequestDetail from './WebhookRequestDetail.vue'
 import WebhookRequestList from './WebhookRequestList.vue'
+import WebhookRequestSender from './WebhookRequestSender.vue'
 import WebhookToolbar from './WebhookToolbar.vue'
 
 const POLL_INTERVAL_MS = 2500
@@ -26,6 +27,7 @@ const originalTitle = ref('')
 const unreadCount = ref(0)
 const nextCursor = ref<string | null>(null)
 const hasMore = ref(false)
+const showSender = ref(false)
 
 const webhookUrl = computed(() => (webhookId.value ? getWebhookUrl(webhookId.value) : ''))
 
@@ -149,6 +151,10 @@ onUnmounted(() => {
   document.title = originalTitle.value
 })
 
+function toggleSender(): void {
+  showSender.value = !showSender.value
+}
+
 watch(webhookId, () => {
   stopPolling()
   webhook.value = null
@@ -157,6 +163,7 @@ watch(webhookId, () => {
   unreadCount.value = 0
   nextCursor.value = null
   hasMore.value = false
+  showSender.value = false
   document.title = originalTitle.value
   if (webhookId.value) {
     initWebhook()
@@ -179,8 +186,15 @@ watch(webhookId, () => {
         :webhook-url="webhookUrl"
         :is-creating="isCreating"
         :is-deleting="isDeleting"
+        :show-sender="showSender"
         @create="handleCreateWebhook"
         @delete="handleDeleteWebhook"
+        @toggle-sender="toggleSender"
+      />
+
+      <WebhookRequestSender
+        v-if="showSender"
+        :webhook-url="webhookUrl"
       />
 
       <p v-if="loadError" class="text-sm text-error">{{ loadError }}</p>

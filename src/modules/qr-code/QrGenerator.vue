@@ -71,7 +71,7 @@ function changeCorrectionLevel(newLevel: QrErrorCorrectionLevel) {
             :class="errorCorrectionLevel === level
               ? 'bg-accent text-white'
               : 'bg-surface-overlay text-text-secondary hover:text-text-primary border border-border'"
-            @click="changeCorrectionLevel(errorCorrectionLevel)"
+            @click="changeCorrectionLevel(level)"
           >
             {{ level }}
           </button>

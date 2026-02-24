@@ -12,11 +12,13 @@ Vue 3 (Composition API)
 Vite 7
 Tailwind CSS 4
 Cloudflare Workers
+Cloudflare D1 (SQLite)
+Cloudflare KV
+Drizzle ORM
 Biome (Linting & Formatting)
 Vitest (Testing)
-Winston (Logging)
 
 /* SOFTWARE */
 Browser: Modern Browsers
 Components: Vue, Vue Router, PWA
-Libraries: colord, qrcode, qr-scanner, he, jsonrepair, anpr-wiegand
+Libraries: colord, qrcode, qr-scanner, he, jsonrepair, anpr-wiegand, valibot, drizzle-orm

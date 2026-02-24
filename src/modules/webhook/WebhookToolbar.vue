@@ -5,11 +5,13 @@ defineProps<{
   webhookUrl: string
   isCreating: boolean
   isDeleting: boolean
+  showSender: boolean
 }>()
 
 defineEmits<{
   create: []
   delete: []
+  toggleSender: []
 }>()
 </script>
 
@@ -20,6 +22,19 @@ defineEmits<{
       <span class="font-mono text-text-primary truncate text-xs">{{ webhookUrl }}</span>
     </div>
     <CopyButton :value="webhookUrl" label="Copy URL" label-copied="Copied!" />
+    <button
+      type="button"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors cursor-pointer"
+      :class="showSender
+        ? 'bg-accent/10 border-accent/30 text-accent'
+        : 'bg-surface-overlay border-border text-text-secondary hover:text-text-primary hover:border-border-focus'"
+      @click="$emit('toggleSender')"
+    >
+      <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+      </svg>
+      Send
+    </button>
     <button
       type="button"
       :disabled="isCreating"

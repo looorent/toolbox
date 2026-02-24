@@ -9,7 +9,8 @@
 	"main": "server/index.ts",
 	"assets": {
 		"directory": "dist",
-		"not_found_handling": "single-page-application"
+		"not_found_handling": "single-page-application",
+		"run_worker_first": ["/api/*", "/scim/*/v2/*", "/hooks/*"]
 	},
 	"observability": {
 		"enabled": true
@@ -30,6 +31,17 @@
       "preview_id": "6ea2224647534fffb3222621d72856a8"
     }
 	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "toolbox-scim",
+			"database_id": "1d56b7d9-6ac5-49bf-b06b-ef97011743ad",
+			"migrations_dir": "drizzle/migrations"
+		}
+	],
+	"triggers": {
+		"crons": ["0 3 * * *"]
+	},
 	"vars": {
 		"WEBHOOK_TTL_SECONDS": "2592000",
 		"WEBHOOK_RATE_LIMIT_PER_DAY": "10000",

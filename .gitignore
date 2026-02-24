@@ -4,6 +4,10 @@ dist
 .env
 .env.local
 *.log
+.mf
+.wrangler
+.dev.vars*
+worker-configuration.d.ts
 
 # Logs
 logs

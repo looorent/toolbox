@@ -21,6 +21,8 @@ const routes = [
   { path: '/cheat-sheets/:sheet?', component: () => import('@modules/cheat-sheets/CheatSheets.vue') },
   { path: '/webhook', component: () => import('@modules/webhook/WebhookCatcher.vue') },
   { path: '/webhook/:id', component: () => import('@modules/webhook/WebhookCatcher.vue') },
+  { path: '/scim', component: () => import('@modules/scim/ScimServer.vue') },
+  { path: '/scim/:id', component: () => import('@modules/scim/ScimServer.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 
