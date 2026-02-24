@@ -6,7 +6,7 @@
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
-    "lineWidth": 180
+    "lineWidth": 140
   },
   "linter": {
     "enabled": true,
@@ -57,6 +57,12 @@
             "noUnusedImports": "off"
           }
         }
+      }
+    },
+    {
+      "includes": ["**/*router.ts"],
+      "formatter": {
+        "lineWidth": 320
       }
     }
   ]

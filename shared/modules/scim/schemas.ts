@@ -1,7 +1,5 @@
 import * as v from 'valibot'
 
-// ─── Sub-schemas ─────────────────────────────────────────────────────────────
-
 export const ScimEmailSchema = v.object({
   value: v.string(),
   type: v.optional(v.string()),
@@ -35,8 +33,6 @@ const ScimMemberSchema = v.object({
   value: v.string(),
   display: v.optional(v.string()),
 })
-
-// ─── UI input schemas (handlers.ts) ──────────────────────────────────────────
 
 export const CreateServerInputSchema = v.object({
   name: v.optional(v.string()),
@@ -88,8 +84,6 @@ export const UpdateGroupInputSchema = v.object({
 export const AddGroupMemberInputSchema = v.object({
   userId: v.string(),
 })
-
-// ─── SCIM body schemas (scim-api.ts) ─────────────────────────────────────────
 
 export const ScimUserBodySchema = v.object({
   schemas: v.optional(v.array(v.string())),

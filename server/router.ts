@@ -31,14 +31,7 @@ import {
   scimSchemasEndpoint,
   scimServiceProviderConfig,
 } from './modules/scim'
-import {
-  captureWebhookRequest,
-  createWebhook,
-  deleteWebhook,
-  getWebhook,
-  getWebhookOpenApiSpec,
-  listWebhookRequests,
-} from './modules/webhook'
+import { captureWebhookRequest, createWebhook, deleteWebhook, getWebhook, getWebhookOpenApiSpec, listWebhookRequests } from './modules/webhook'
 
 type Params = Record<string, string | undefined>
 type Handler = (request: Request, env: Env, params: Params, url: URL, ctx: ExecutionContext) => Promise<Response>
@@ -70,11 +63,9 @@ const routes = [
   route('PUT', '/api/scim-servers/:id/groups/:groupId', (req, env, params) => apiUpdateGroup(req, env, params.id ?? '', params.groupId ?? '')),
   route('DELETE', '/api/scim-servers/:id/groups/:groupId', (_req, env, params) => apiDeleteGroup(env, params.id ?? '', params.groupId ?? '')),
   route('POST', '/api/scim-servers/:id/groups/:groupId/members', (req, env, params) => apiAddGroupMember(req, env, params.id ?? '', params.groupId ?? '')),
-  route('DELETE', '/api/scim-servers/:id/groups/:groupId/members/:userId', (_req, env, params) =>
-    apiRemoveGroupMember(env, params.id ?? '', params.groupId ?? '', params.userId ?? ''),
-  ),
+  route('DELETE', '/api/scim-servers/:id/groups/:groupId/members/:userId', (_req, env, params) => apiRemoveGroupMember(env, params.id ?? '', params.groupId ?? '', params.userId ?? '')),
 
-  // SCIM discovery endpoints─
+  // SCIM discovery endpoints
   route('GET', '/scim/:serverId/v2/ServiceProviderConfig', (req, env, params, url, ctx) => scimServiceProviderConfig(req, env, ctx, params.serverId ?? '', url)),
   route('GET', '/scim/:serverId/v2/ResourceTypes', (req, env, params, url, ctx) => scimResourceTypes(req, env, ctx, params.serverId ?? '', url)),
   route('GET', '/scim/:serverId/v2/Schemas', (req, env, params, url, ctx) => scimSchemasEndpoint(req, env, ctx, params.serverId ?? '', url)),

@@ -90,8 +90,6 @@ function mockRepo(overrides: Record<string, unknown> = {}) {
   return repo
 }
 
-// ─── apiCreateServer ──────────────────────────────────────────────────────────
-
 describe('apiCreateServer', () => {
   it('returns 201 with bearerToken in response', async () => {
     mockRepo()
@@ -154,8 +152,6 @@ describe('apiCreateServer', () => {
   })
 })
 
-// ─── apiGetServer ─────────────────────────────────────────────────────────────
-
 describe('apiGetServer', () => {
   it('returns server with user and group counts', async () => {
     mockRepo({
@@ -184,8 +180,6 @@ describe('apiGetServer', () => {
   })
 })
 
-// ─── apiDeleteServer ──────────────────────────────────────────────────────────
-
 describe('apiDeleteServer', () => {
   it('returns { deleted: true }', async () => {
     const repo = mockRepo({ findServer: vi.fn().mockResolvedValue(SERVER) })
@@ -205,8 +199,6 @@ describe('apiDeleteServer', () => {
     expect(response.status).toBe(404)
   })
 })
-
-// ─── apiListUsers ─────────────────────────────────────────────────────────────
 
 describe('apiListUsers', () => {
   it('returns users and total', async () => {
@@ -232,8 +224,6 @@ describe('apiListUsers', () => {
   })
 })
 
-// ─── apiCreateUser ────────────────────────────────────────────────────────────
-
 describe('apiCreateUser', () => {
   it('returns 201 with user', async () => {
     mockRepo({ findServer: vi.fn().mockResolvedValue(SERVER) })
@@ -257,8 +247,6 @@ describe('apiCreateUser', () => {
     expect(body.error).toBe('userName_required')
   })
 })
-
-// ─── apiDeleteUser ────────────────────────────────────────────────────────────
 
 describe('apiDeleteUser', () => {
   it('returns { deleted: true }', async () => {
@@ -284,8 +272,6 @@ describe('apiDeleteUser', () => {
   })
 })
 
-// ─── apiListGroups ────────────────────────────────────────────────────────────
-
 describe('apiListGroups', () => {
   it('returns groups and total', async () => {
     mockRepo({
@@ -301,8 +287,6 @@ describe('apiListGroups', () => {
     expect(body.total).toBe(1)
   })
 })
-
-// ─── apiCreateGroup ───────────────────────────────────────────────────────────
 
 describe('apiCreateGroup', () => {
   it('returns 201 with group', async () => {
@@ -327,8 +311,6 @@ describe('apiCreateGroup', () => {
     expect(body.error).toBe('displayName_required')
   })
 })
-
-// ─── apiDeleteGroup ───────────────────────────────────────────────────────────
 
 describe('apiDeleteGroup', () => {
   it('returns { deleted: true }', async () => {

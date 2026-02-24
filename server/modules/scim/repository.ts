@@ -336,8 +336,6 @@ function buildRepository(env: Env) {
   }
 }
 
-// ─── Row mappers (pure, no DB access) ──────────────────────────────────────────
-
 type UserRow = typeof scimUser.$inferSelect
 
 function parseJsonColumn<T extends BaseSchema<unknown, unknown, BaseIssue<unknown>>>(

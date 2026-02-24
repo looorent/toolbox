@@ -144,8 +144,6 @@ function mockRepo(overrides: Record<string, unknown> = {}) {
 
 const BASE_URL = 'https://example.com/scim/srv-1/v2'
 
-// ─── Bearer auth ──────────────────────────────────────────────────────────────
-
 describe('bearer auth', () => {
   it('allows request with valid token', async () => {
     mockRepo({ countUsersFiltered: vi.fn().mockResolvedValue(0), listUsersPaginated: vi.fn().mockResolvedValue([]) })
@@ -192,8 +190,6 @@ describe('bearer auth', () => {
   })
 })
 
-// ─── Body limits ──────────────────────────────────────────────────────────────
-
 describe('body limits', () => {
   it('returns 413 when Content-Length exceeds 1 MB', async () => {
     mockRepo()
@@ -231,8 +227,6 @@ describe('body limits', () => {
     expect(response.status).toBe(400)
   })
 })
-
-// ─── scimCreateUser ───────────────────────────────────────────────────────────
 
 describe('scimCreateUser', () => {
   it('returns 201 with SCIM response containing schemas and meta', async () => {
@@ -272,8 +266,6 @@ describe('scimCreateUser', () => {
   })
 })
 
-// ─── scimGetUser ──────────────────────────────────────────────────────────────
-
 describe('scimGetUser', () => {
   it('returns user with SCIM envelope', async () => {
     mockRepo({ findUser: vi.fn().mockResolvedValue(USER) })
@@ -298,8 +290,6 @@ describe('scimGetUser', () => {
     expect(response.status).toBe(404)
   })
 })
-
-// ─── scimPatchUser ────────────────────────────────────────────────────────────
 
 describe('scimPatchUser', () => {
   it('applies patch operations and returns updated user', async () => {
@@ -334,8 +324,6 @@ describe('scimPatchUser', () => {
   })
 })
 
-// ─── scimDeleteUser ───────────────────────────────────────────────────────────
-
 describe('scimDeleteUser', () => {
   it('returns 204 with no body', async () => {
     mockRepo({ findUser: vi.fn().mockResolvedValue(USER) })
@@ -357,8 +345,6 @@ describe('scimDeleteUser', () => {
   })
 })
 
-// ─── scimListUsers ────────────────────────────────────────────────────────────
-
 describe('scimListUsers', () => {
   it('returns ListResponse envelope with totalResults and startIndex', async () => {
     mockRepo({
@@ -378,8 +364,6 @@ describe('scimListUsers', () => {
     expect(Array.isArray(body.Resources)).toBe(true)
   })
 })
-
-// ─── scimCreateGroup ──────────────────────────────────────────────────────────
 
 describe('scimCreateGroup', () => {
   it('returns 201 with SCIM group response', async () => {
@@ -409,8 +393,6 @@ describe('scimCreateGroup', () => {
   })
 })
 
-// ─── scimDeleteGroup ──────────────────────────────────────────────────────────
-
 describe('scimDeleteGroup', () => {
   it('returns 204 with no body', async () => {
     mockRepo({ findGroup: vi.fn().mockResolvedValue(GROUP) })
@@ -432,8 +414,6 @@ describe('scimDeleteGroup', () => {
   })
 })
 
-// ─── scimServiceProviderConfig ────────────────────────────────────────────────
-
 describe('scimServiceProviderConfig', () => {
   it('returns config with correct schemas', async () => {
     mockRepo()
@@ -448,8 +428,6 @@ describe('scimServiceProviderConfig', () => {
     expect(Array.isArray(body.schemas)).toBe(true)
   })
 })
-
-// ─── scimCountResources ───────────────────────────────────────────────────────
 
 describe('scimCountResources', () => {
   it('returns user and group counts', async () => {
