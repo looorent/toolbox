@@ -23,6 +23,7 @@ const routes = [
   { path: '/webhook/:id', component: () => import('@modules/webhook/WebhookCatcher.vue') },
   { path: '/scim', component: () => import('@modules/scim/ScimServer.vue') },
   { path: '/scim/:id', component: () => import('@modules/scim/ScimServer.vue') },
+  { path: '/image-to-svg', component: () => import('@modules/image-to-svg/ImageToSvg.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ]
 

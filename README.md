@@ -9,6 +9,7 @@ A collection of lightweight, browser-native developer utilities. This toolbox is
 - **Cheat Sheets**: Quick reference for Bash, CSS, Git, HTTP, and Regex.
 - **Color Converter**: Convert between Hex, RGB, HSL, and more.
 - **Epoch Converter**: Convert Unix timestamps to human-readable dates.
+- **Image to SVG**: Convert raster images (PNG, JPG, WebP) to SVG vector graphics using VTracer WASM, with presets and advanced parameter tuning.
 - **HTML Entity**: Encode and decode HTML entities.
 - **JSON Validator**: Format, repair, and validate JSON payloads.
 - **JWT Decoder**: Inspect JSON Web Tokens (header and payload).

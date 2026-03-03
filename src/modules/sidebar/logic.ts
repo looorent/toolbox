@@ -35,6 +35,7 @@ export const sections: Section[] = [
       { path: '/number', name: 'Number Converter', abbreviation: '#' },
       { path: '/color', name: 'Color Converter', abbreviation: 'CLR' },
       { path: '/epoch', name: 'Epoch Converter', abbreviation: 'TS' },
+      { path: '/image-to-svg', name: 'Image to SVG', abbreviation: 'VEC' },
     ],
   },
   {
