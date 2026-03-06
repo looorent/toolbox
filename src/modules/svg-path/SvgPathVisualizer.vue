@@ -44,8 +44,8 @@ const svgString = computed(() => validPath.value ? buildSvgString(pathData.value
 </script>
 
 <template>
-  <div class="space-y-6">
-    <p class="text-sm text-text-secondary">Paste an SVG path <code class="text-accent font-mono text-xs">d</code> attribute to visualize it.</p>
+  <div class="tb-stack-6">
+    <p class="tb-text-description">Paste an SVG path <code class="tb-code-inline tb-text-accent">d</code> attribute to visualize it.</p>
 
     <SvgPathInput v-model="pathData" :error="error" />
 
@@ -66,9 +66,9 @@ const svgString = computed(() => validPath.value ? buildSvgString(pathData.value
       :valid-path="validPath"
     />
 
-    <div v-if="validPath" class="flex items-center gap-3">
-      <span class="text-[10px] font-semibold uppercase tracking-wider text-text-muted">ViewBox</span>
-      <code class="text-xs font-mono text-text-secondary">{{ viewBox }}</code>
+    <div v-if="validPath" class="tb-row tb-row--gap-3">
+      <span class="tb-label tb-label--inline">ViewBox</span>
+      <code class="tb-code-inline tb-text-secondary">{{ viewBox }}</code>
     </div>
   </div>
 </template>

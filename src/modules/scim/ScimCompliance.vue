@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { TbCard } from '@components'
+
 type Status = 'yes' | 'partial' | 'no'
 
 interface Row {
@@ -87,74 +89,75 @@ function statusLabel(status: Status): string {
 
 function statusClass(status: Status): string {
   switch (status) {
-    case 'yes': return 'bg-success/10 text-success border-success/20'
-    case 'partial': return 'bg-accent/10 text-accent border-accent/20'
-    case 'no': return 'bg-surface-overlay text-text-muted border-border'
+    case 'yes': return 'tb-badge--valid'
+    case 'partial': return 'tb-badge--accent'
+    case 'no': return ''
   }
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="tb-stack-6">
     <div>
-      <h2 class="text-sm font-semibold text-text-primary">SCIM 2.0 Compliance</h2>
-      <p class="mt-1 text-xs text-text-muted">
-        Coverage against <a href="https://tools.ietf.org/html/rfc7644" target="_blank" rel="noopener" class="text-accent hover:underline">RFC 7644</a>
-        and <a href="https://tools.ietf.org/html/rfc7643" target="_blank" rel="noopener" class="text-accent hover:underline">RFC 7643</a>.
+      <h2 class="tb-section-title">SCIM 2.0 Compliance</h2>
+      <p class="tb-hint tb-mt-2">
+        Coverage against <a href="https://tools.ietf.org/html/rfc7644" target="_blank" rel="noopener" class="tb-text-accent tb-link">RFC 7644</a>
+        and <a href="https://tools.ietf.org/html/rfc7643" target="_blank" rel="noopener" class="tb-text-accent tb-link">RFC 7643</a>.
         The implemented subset covers what real identity providers exercise in practice.
       </p>
     </div>
 
-    <div v-for="section in sections" :key="section.title" class="flex flex-col gap-2">
-      <h3 class="text-xs font-semibold text-text-muted uppercase tracking-wider">{{ section.title }}</h3>
-      <div class="rounded-lg border border-border overflow-hidden">
-        <table class="w-full text-xs">
+    <div v-for="section in sections" :key="section.title" class="tb-stack-2">
+      <h3 class="tb-label tb-label--inline">{{ section.title }}</h3>
+      <div class="tb-table__wrapper">
+        <table class="tb-table">
           <thead>
-            <tr class="bg-surface-raised border-b border-border">
-              <th class="px-4 py-2 text-left font-medium text-text-muted w-1/3">Feature</th>
-              <th class="px-4 py-2 text-left font-medium text-text-muted w-20">Status</th>
-              <th class="px-4 py-2 text-left font-medium text-text-muted">Notes</th>
+            <tr>
+              <th class="tb-w-third">Feature</th>
+              <th class="tb-w-20">Status</th>
+              <th>Notes</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="row in section.rows"
               :key="row.feature"
-              class="border-b border-border last:border-0"
             >
-              <td class="px-4 py-2.5 text-text-secondary">{{ row.feature }}</td>
-              <td class="px-4 py-2.5">
-                <span class="px-1.5 py-0.5 rounded border text-xs" :class="statusClass(row.status)">
+              <td class="tb-text-secondary">{{ row.feature }}</td>
+              <td>
+                <span
+                  class="tb-badge"
+                  :class="statusClass(row.status)"
+                >
                   {{ statusLabel(row.status) }}
                 </span>
               </td>
-              <td class="px-4 py-2.5 text-text-muted">{{ row.notes }}</td>
+              <td class="tb-text-muted">{{ row.notes }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <h3 class="text-xs font-semibold text-text-muted uppercase tracking-wider">Identity Provider Notes</h3>
-      <div class="flex flex-col gap-3">
-        <div
+    <div class="tb-stack-2">
+      <h3 class="tb-label tb-label--inline">Identity Provider Notes</h3>
+      <div class="tb-stack-3">
+        <TbCard
           v-for="idp in idpNotes"
           :key="idp.name"
-          class="rounded-lg border border-border bg-surface-raised p-4"
+          :title="idp.name"
         >
-          <p class="text-xs font-semibold text-text-primary mb-2">{{ idp.name }}</p>
-          <ul class="flex flex-col gap-1.5">
+          <ul class="tb-stack-3 tb-list-reset">
             <li
               v-for="item in idp.items"
               :key="item"
-              class="flex items-start gap-2 text-xs text-text-secondary"
+              class="tb-row tb-items-start tb-text-xs tb-text-secondary"
             >
-              <span class="mt-0.5 shrink-0 text-text-muted">–</span>
+              <span class="tb-text-muted tb-flex-shrink-0 tb-mt-1">–</span>
               <span>{{ item }}</span>
             </li>
           </ul>
-        </div>
+        </TbCard>
       </div>
     </div>
   </div>

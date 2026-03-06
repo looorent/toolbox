@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyCodeRow from '@components/CopyCodeRow.vue'
+import { TbCopyRow, TbDropZone } from '@components'
 import { ref } from 'vue'
 import { scanQrFromFile } from './logic'
 
@@ -25,32 +25,18 @@ async function processFile(file: File) {
     scanLoading.value = false
   }
 }
-
-function handleScanFile(event: Event) {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (file) {
-    processFile(file)
-  }
-}
 </script>
 
 <template>
-  <div class="space-y-5">
-    <label class="block">
-      <span class="text-sm text-text-secondary">Upload an image containing a QR code</span>
-      <input
-        type="file"
-        accept="image/*"
-        class="mt-2 block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-accent file:text-white hover:file:bg-accent-hover file:cursor-pointer file:transition-colors"
-        @change="handleScanFile"
-      />
-    </label>
+  <div class="tb-stack-6">
+    <TbDropZone accept="image/*" label="Drop an image here or click to browse" subtitle="Supports PNG, JPG, GIF, WebP, and BMP" @file="processFile" />
 
-    <p v-if="scanLoading" class="text-sm text-text-muted">Scanning...</p>
+    <p v-if="scanLoading" role="status" class="tb-text-sm tb-text-muted">Scanning...</p>
 
-    <p v-if="scanError" class="text-sm text-error">{{ scanError }}</p>
+    <p v-if="scanError" role="alert" class="tb-text-sm tb-text-error">{{ scanError }}</p>
 
-    <CopyCodeRow v-if="scanResult" :value="scanResult" />
+    <TbCopyRow v-if="scanResult" :value="scanResult">
+      <code class="tb-text-sm tb-font-mono tb-text-primary">{{ scanResult }}</code>
+    </TbCopyRow>
   </div>
 </template>

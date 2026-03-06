@@ -9,9 +9,11 @@ export interface CapturedHeader {
   value: string
 }
 
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'
+
 export interface CapturedRequest {
   id: string
-  method: string
+  method: HttpMethod
   path: string
   queryParams: Record<string, string>
   headers: CapturedHeader[]

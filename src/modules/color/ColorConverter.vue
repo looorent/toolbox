@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyStatCard from '@components/CopyStatCard.vue'
+import { TbInput, TbStatCard } from '@components'
 import { useBidirectionalConverter } from '@composables/useBidirectionalConverter'
 import { useCopy } from '@composables/useCopy'
 import { computed } from 'vue'
@@ -43,16 +43,16 @@ const HSL_CHANNELS = [
   { key: 'l', label: 'L', max: 100 },
 ]
 
-function rgbBarClass(key: string): string {
+function rgbBarColor(key: string): string {
   switch (key) {
     case 'r':
-      return 'bg-red-500'
+      return '#ef4444'
     case 'g':
-      return 'bg-green-500'
+      return '#22c55e'
     case 'b':
-      return 'bg-blue-500'
+      return '#3b82f6'
     default:
-      return 'bg-accent'
+      return 'var(--color-accent)'
   }
 }
 
@@ -62,63 +62,58 @@ function selectColor(color: string): void {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex gap-4 items-start">
-      <div class="flex-1">
-        <label class="block text-sm text-text-secondary mb-2">Enter a color (hex, rgb, hsl, or name)</label>
-        <input
-          v-model="colorInput"
-          type="text"
-          placeholder="#3b82f6, rgb(59,130,246), hsl(217,91%,60%), blue"
-          class="w-full bg-surface-overlay border border-border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none focus:border-border-focus transition-colors"
-        />
+  <div class="tb-stack-6">
+    <div class="tb-row tb-row--gap-4 tb-items-start">
+      <div class="tb-flex-1">
+        <label class="tb-label tb-text-description">Enter a color (hex, rgb, hsl, or name)</label>
+        <TbInput v-model="colorInput" placeholder="#3b82f6, rgb(59,130,246), hsl(217,91%,60%), blue" />
       </div>
-      <div class="pt-7">
-        <label class="relative block w-12 h-12 rounded-lg border border-border overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+      <div class="tb-pt-12">
+        <label class="tb-relative tb-overflow-hidden tb-color-picker">
           <input
             v-model="pickerColor"
             type="color"
-            class="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+            class="tb-color-picker__input"
           />
-          <div class="w-full h-full" :style="{ backgroundColor: colorInstance ? colorInstance.toHex() : '#000' }" />
+          <div class="tb-color-picker__preview" :style="{ backgroundColor: colorInstance ? colorInstance.toHex() : '#000' }" />
         </label>
       </div>
     </div>
 
     <template v-if="colorInstance && formats">
       <div
-        class="rounded-lg h-28 flex items-center justify-center text-lg font-semibold font-mono border border-border cursor-pointer active:opacity-80"
+        class="tb-flex-center tb-font-mono tb-color-banner"
         :style="{ backgroundColor: formats.hex, color: formats.contrastColor }"
         @click="copy('preview', formats.hex)"
       >
         {{ formats.hex }}
-        <span v-if="copiedKey === 'preview'" class="text-sm ml-2">Copied!</span>
+        <span v-if="copiedKey === 'preview'" role="status" class="tb-text-sm tb-ml-4">Copied!</span>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <CopyStatCard
+      <div class="tb-grid-2">
+        <TbStatCard
           v-for="formatCard in FORMAT_CARDS"
           :key="formatCard.label"
           :title="formatCard.label"
           :value="formats[formatCard.key]"
         />
-        <CopyStatCard title="Luminance" :value="formats.luminance" />
+        <TbStatCard title="Luminance" :value="formats.luminance" />
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="tb-grid-2 tb-gap-8">
         <ColorChannelCard
           title="RGB"
           :copy-value="formats.rgb"
           :channels="RGB_CHANNELS"
           :values="formats.rgbValues"
-          :bar-class="rgbBarClass"
+          :bar-color="rgbBarColor"
         />
         <ColorChannelCard
           title="HSL"
           :copy-value="formats.hsl"
           :channels="HSL_CHANNELS"
           :values="formats.hslValues"
-          bar-class="bg-accent"
+          bar-color="var(--color-accent)"
         />
       </div>
 
@@ -126,7 +121,7 @@ function selectColor(color: string): void {
       <ColorShades v-if="palette" :shades="palette.shades" @select-color="selectColor" />
     </template>
 
-    <div v-else-if="colorInput.trim()" class="bg-error/10 border border-error/30 rounded-lg px-4 py-3 text-sm text-error">
+    <div v-else-if="colorInput.trim()" class="tb-alert tb-alert--error">
       Could not parse color. Try hex (#ff0000), rgb(255, 0, 0), hsl(0, 100%, 50%), or a CSS name (red).
     </div>
   </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbButton } from '@components'
 import { useCopy } from '@composables/useCopy'
 import type { JsonValidationResult } from './types'
 
@@ -10,6 +11,7 @@ const emit = defineEmits<{
   format: []
   minify: []
   loadSample: []
+  applyFix: []
 }>()
 
 const { copy, copiedKey } = useCopy()
@@ -22,45 +24,27 @@ function copyFormatted() {
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-2">
+  <div class="tb-row tb-row--gap-2 tb-row--wrap">
     <template v-if="result.kind === 'valid'">
-      <button
-        type="button"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-overlay text-text-secondary hover:text-text-primary border border-border transition-colors"
-        @click="emit('format')"
-      >
-        Prettify
-      </button>
-      <button
-        type="button"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-overlay text-text-secondary hover:text-text-primary border border-border transition-colors"
-        @click="emit('minify')"
-      >
-        Minify
-      </button>
-      <button
-        type="button"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-        :class="copiedKey === 'json' ? 'bg-success/20 text-success' : 'bg-surface-overlay text-text-secondary hover:text-text-primary border border-border'"
-        @click="copyFormatted"
-      >
+      <TbButton variant="secondary" size="sm" @click="emit('format')">Prettify</TbButton>
+      <TbButton variant="secondary" size="sm" @click="emit('minify')">Minify</TbButton>
+      <TbButton :variant="copiedKey === 'json' ? 'primary' : 'secondary'" size="sm" @click="copyFormatted">
         {{ copiedKey === 'json' ? 'Copied!' : 'Copy' }}
-      </button>
+      </TbButton>
     </template>
 
-    <button
-      v-if="result.kind === 'empty'"
-      type="button"
-      class="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-overlay text-text-secondary hover:text-text-primary border border-border transition-colors"
-      @click="emit('loadSample')"
-    >
-      Load sample
-    </button>
+    <template v-if="result.kind === 'invalid' && result.fixedJson">
+      <TbButton variant="primary" size="sm" @click="emit('applyFix')">Apply fix</TbButton>
+      <span class="tb-text-xs tb-text-secondary">{{ result.fixSummary.join(', ') }}</span>
+    </template>
+
+    <TbButton v-if="result.kind === 'empty'" variant="secondary" size="sm" @click="emit('loadSample')">Load sample</TbButton>
 
     <span
       v-if="result.kind !== 'empty'"
-      class="ml-auto px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full"
-      :class="result.kind === 'valid' ? 'bg-success/15 text-success' : 'bg-error/15 text-error'"
+      role="status"
+      :class="result.kind === 'valid' ? 'tb-badge tb-badge--valid' : 'tb-badge tb-badge--invalid'"
+      class="tb-ml-auto"
     >
       {{ result.kind === 'valid' ? 'Valid JSON' : 'Invalid' }}
     </span>

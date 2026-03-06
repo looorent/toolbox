@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyButton from '@components/CopyButton.vue'
+import { TbButton, TbCopyButton, TbFieldInput, TbInput } from '@components'
 import { ref, useTemplateRef, watch } from 'vue'
 import { downloadCanvasAsPng, generateQrDataUri, generateQrToCanvas } from './logic'
 import type { QrErrorCorrectionLevel } from './types'
@@ -51,26 +51,25 @@ function changeCorrectionLevel(newLevel: QrErrorCorrectionLevel) {
 </script>
 
 <template>
-  <div class="space-y-5">
-    <textarea
+  <div class="tb-stack-6">
+    <TbFieldInput
       v-model="generatorText"
+      label="Text or URL"
+      multiline
+      :rows="3"
       placeholder="Enter text or URL..."
-      rows="3"
-      class="w-full bg-surface-overlay border border-border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none focus:border-border-focus transition-colors resize-y"
     />
 
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-text-secondary">Error correction</label>
-        <div class="flex gap-1">
+    <div class="tb-row tb-row--gap-4 tb-row--wrap">
+      <div class="tb-row">
+        <label class="tb-text-description">Error correction</label>
+        <div class="tb-row tb-row--gap-1">
           <button
             v-for="level in errorCorrectionLevels"
             :key="level"
             type="button"
-            class="w-8 h-8 text-xs font-bold rounded-lg transition-colors"
-            :class="errorCorrectionLevel === level
-              ? 'bg-accent text-white'
-              : 'bg-surface-overlay text-text-secondary hover:text-text-primary border border-border'"
+            class="tb-btn-pill tb-btn-pill--sm tb-btn-pill--square tb-font-bold"
+            :class="{ 'tb-btn-pill--active': errorCorrectionLevel === level }"
             @click="changeCorrectionLevel(level)"
           >
             {{ level }}
@@ -78,37 +77,23 @@ function changeCorrectionLevel(newLevel: QrErrorCorrectionLevel) {
         </div>
       </div>
 
-      <!-- Size -->
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-text-secondary">Size</label>
-        <input
-          v-model.number="generatorSize"
-          type="number"
-          min="100"
-          max="1000"
-          step="50"
-          class="w-20 bg-surface-overlay border border-border rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:border-border-focus transition-colors"
-        />
+      <div class="tb-row">
+        <label class="tb-text-description">Size</label>
+        <TbInput v-model.number="generatorSize" type="number" min="100" max="1000" step="50" class="tb-w-20" />
       </div>
     </div>
 
-    <p v-if="generatorError" class="text-sm text-error">{{ generatorError }}</p>
+    <p v-if="generatorError" role="alert" class="tb-text-sm tb-text-error">{{ generatorError }}</p>
 
-    <div v-if="generatorText" class="flex justify-center">
-      <div class="bg-surface-overlay border border-border rounded-lg p-4 inline-block">
+    <div v-if="generatorText" class="tb-flex-center">
+      <div class="tb-card tb-inline-block">
         <canvas ref="generatorCanvas" />
       </div>
     </div>
 
-    <div v-if="generatorText && !generatorError" class="flex flex-wrap gap-2">
-      <button
-        type="button"
-        @click="downloadGeneratorPng"
-        class="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-lg transition-colors"
-      >
-        Download PNG
-      </button>
-      <CopyButton :value="generatorDataUri" label="Copy Data URI" label-copied="Copied!" />
+    <div v-if="generatorText && !generatorError" class="tb-row tb-row--gap-2 tb-row--wrap">
+      <TbButton @click="downloadGeneratorPng">Download PNG</TbButton>
+      <TbCopyButton :value="generatorDataUri" label="Copy Data URI" label-copied="Copied!" />
     </div>
   </div>
 </template>

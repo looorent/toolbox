@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyRow from '@/components/CopyRow.vue'
+import { TbCopyRow } from '@components'
 
 defineProps<{
   parts: [string, string, string]
@@ -8,10 +8,10 @@ defineProps<{
 </script>
 
 <template>
-  <CopyRow
+  <TbCopyRow
     :value="rawToken"
-    class="bg-surface-overlay border border-border rounded-lg px-4 py-3 font-mono text-sm break-all leading-relaxed transition-opacity"
+    class="tb-code-block tb-break-all tb-block tb-leading-relaxed"
   >
-    <span class="text-red-400">{{ parts[0] }}</span><span class="text-text-muted">.</span><span class="text-purple-400">{{ parts[1] }}</span><span class="text-text-muted">.</span><span class="text-cyan-400">{{ parts[2] }}</span>
-  </CopyRow>
+    <span class="tb-text-jwt-header">{{ parts[0] }}</span><span class="tb-text-muted">.</span><span class="tb-text-jwt-payload">{{ parts[1] }}</span><span class="tb-text-muted">.</span><span class="tb-text-jwt-signature">{{ parts[2] }}</span>
+  </TbCopyRow>
 </template>

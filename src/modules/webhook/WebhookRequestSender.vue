@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbButton, TbCard, TbInput } from '@components'
 import { useCopy } from '@composables/useCopy'
 import { computed, ref } from 'vue'
 import { methodColor } from './logic'
@@ -77,13 +78,13 @@ function removeHeader(index: number): void {
   customHeaders.value = customHeaders.value.filter((_, headerIndex) => headerIndex !== index)
 }
 
-function statusColor(status: number): string {
+function statusBadgeClass(status: number): string {
   if (status >= 200 && status < 300) {
-    return 'text-success bg-success/10 border-success/20'
+    return 'tb-badge--valid'
   } else if (status >= 400) {
-    return 'text-error bg-error/10 border-error/20'
+    return 'tb-badge--invalid'
   } else {
-    return 'text-text-muted bg-surface-overlay border-border'
+    return ''
   }
 }
 
@@ -122,51 +123,49 @@ async function sendRequest(): Promise<void> {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3 p-4 bg-surface-raised rounded-lg border border-border">
+  <TbCard class="tb-stack-3 tb-card--raised">
     <!-- Header -->
-    <div class="flex items-center justify-between">
-      <h2 class="text-xs font-semibold text-text-primary">Send Request</h2>
-      <button
-        type="button"
-        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-surface border border-border transition-colors cursor-pointer"
-        :class="copiedKey === 'openapi' ? 'text-success border-success/20' : 'text-text-secondary hover:border-border-focus hover:text-text-primary'"
+    <div class="tb-row tb-row--between">
+      <h2 class="tb-section-subtitle">Send Request</h2>
+      <TbButton
+        variant="secondary"
+        size="sm"
+        :class="copiedKey === 'openapi' ? 'tb-text-success' : ''"
         title="Copy OpenAPI 3.0 spec URL (importable in Postman, Insomnia, etc.)"
         @click="copyOpenApiUrl"
       >
-        <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
         </svg>
         {{ copiedKey === 'openapi' ? 'Copied!' : 'OpenAPI' }}
-      </button>
+      </TbButton>
     </div>
 
     <!-- Method selector + URL -->
-    <div class="flex items-center gap-2">
-      <div class="flex rounded-lg border border-border overflow-hidden shrink-0">
+    <div class="tb-row">
+      <div class="tb-toggle-group tb-toggle-group--sm tb-flex-shrink-0">
         <button
           v-for="method in METHODS"
           :key="method"
           type="button"
-          class="px-2.5 py-1.5 text-[10px] font-bold font-mono border-r border-border last:border-r-0 transition-colors cursor-pointer"
-          :class="selectedMethod === method
-            ? methodColor(method)
-            : 'text-text-muted bg-surface hover:bg-surface-overlay'"
+          class="tb-toggle-group__btn tb-font-mono tb-font-bold"
+          :class="selectedMethod === method ? methodColor(method) : ''"
           @click="selectMethod(method)"
         >
           {{ method }}
         </button>
       </div>
-      <code class="flex-1 min-w-0 text-xs font-mono text-text-muted truncate px-2.5 py-1.5 bg-surface border border-border rounded-lg">{{ webhookUrl }}</code>
+      <code class="tb-code-block tb-hint tb-truncate tb-flex-fill">{{ webhookUrl }}</code>
     </div>
 
     <!-- Preset templates -->
-    <div class="flex items-center gap-2 flex-wrap">
-      <span class="text-[11px] text-text-muted shrink-0">Presets:</span>
+    <div class="tb-row tb-row--wrap">
+      <span class="tb-text-muted tb-text-tiny tb-flex-shrink-0">Presets:</span>
       <button
         v-for="preset in PRESETS"
         :key="preset.label"
         type="button"
-        class="px-2 py-0.5 text-[11px] rounded border bg-surface border-border text-text-muted hover:border-border-focus hover:text-text-secondary transition-colors cursor-pointer"
+        class="tb-chip"
         @click="applyPreset(preset)"
       >
         {{ preset.label }}
@@ -174,57 +173,58 @@ async function sendRequest(): Promise<void> {
     </div>
 
     <!-- Body -->
-    <div v-if="bodyVisible" class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2">
-        <label class="text-[11px] text-text-muted">Body</label>
-        <input
+    <div v-if="bodyVisible" class="tb-stack-1">
+      <div class="tb-row">
+        <label class="tb-text-muted tb-text-tiny">Body</label>
+        <TbInput
           v-model="contentType"
-          class="flex-1 max-w-64 px-2 py-0.5 text-[11px] font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-secondary placeholder-text-muted"
+          class="tb-input--small tb-flex-1 tb-max-w-64"
           placeholder="Content-Type"
         />
       </div>
       <textarea
         v-model="body"
         rows="6"
-        class="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted resize-y"
+        class="tb-textarea tb-text-xs"
         placeholder="Request body…"
       />
     </div>
 
     <!-- Custom headers -->
-    <div class="flex flex-col gap-1.5">
-      <div class="flex items-center gap-2">
-        <span class="text-[11px] text-text-muted">Headers</span>
+    <div class="tb-stack-1">
+      <div class="tb-row">
+        <span class="tb-text-muted tb-text-tiny">Headers</span>
         <button
           type="button"
-          class="px-1.5 py-0.5 text-[11px] rounded border bg-surface border-border text-text-muted hover:border-border-focus hover:text-text-secondary transition-colors cursor-pointer"
+          class="tb-chip"
           @click="addHeader"
         >
           + Add
         </button>
       </div>
-      <div v-if="customHeaders.length > 0" class="flex flex-col gap-1.5">
+      <div v-if="customHeaders.length > 0" class="tb-stack-1">
         <div
           v-for="(header, index) in customHeaders"
           :key="index"
-          class="flex items-center gap-1.5"
+          class="tb-row"
         >
-          <input
+          <TbInput
             v-model="header.key"
-            class="w-40 px-2 py-1 text-[11px] font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
+            class="tb-input--small tb-w-40"
             placeholder="Header-Name"
           />
-          <input
+          <TbInput
             v-model="header.value"
-            class="flex-1 px-2 py-1 text-[11px] font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
+            class="tb-input--small tb-flex-1"
             placeholder="value"
           />
           <button
             type="button"
-            class="shrink-0 p-1 text-text-muted hover:text-error transition-colors cursor-pointer"
+            class="tb-btn-icon tb-btn-icon--danger tb-flex-shrink-0"
+            aria-label="Remove header"
             @click="removeHeader(index)"
           >
-            <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -233,23 +233,19 @@ async function sendRequest(): Promise<void> {
     </div>
 
     <!-- Send row -->
-    <div class="flex items-center gap-3">
-      <button
-        type="button"
-        :disabled="isSending"
-        class="px-4 py-1.5 text-xs font-medium rounded-lg bg-accent text-white hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
-        @click="sendRequest"
-      >
+    <div class="tb-row tb-row--gap-3">
+      <TbButton size="sm" :disabled="isSending" @click="sendRequest">
         {{ isSending ? 'Sending…' : 'Send' }}
-      </button>
+      </TbButton>
       <span
         v-if="lastResponse !== null"
-        class="px-2 py-0.5 text-xs font-mono font-semibold rounded border"
-        :class="statusColor(lastResponse.status)"
+        role="status"
+        class="tb-badge tb-font-mono tb-font-semibold"
+        :class="statusBadgeClass(lastResponse.status)"
       >
         {{ lastResponse.status }}
       </span>
-      <span v-if="sendError" class="text-xs text-error">{{ sendError }}</span>
+      <span v-if="sendError" role="alert" class="tb-text-xs tb-text-error">{{ sendError }}</span>
     </div>
-  </div>
+  </TbCard>
 </template>

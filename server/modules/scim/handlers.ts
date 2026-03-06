@@ -12,7 +12,7 @@ import type { BaseIssue, BaseSchema, InferOutput } from 'valibot'
 import { safeParse } from 'valibot'
 import { SAMPLE_GROUPS, SAMPLE_USERS } from './fixtures'
 import { allowResponse, buildFormattedName } from './logic'
-import { createRepository } from './repository'
+import { createRepository, type ScimRepository } from './repository'
 
 const MAX_BODY_SIZE = 1_048_576 // 1 MB
 
@@ -36,6 +36,11 @@ async function parseBody<T extends BaseSchema<unknown, unknown, BaseIssue<unknow
     return allowResponse({ error: 'invalid_body' }, 400)
   }
   return result.output
+}
+
+async function requireServerExists(repo: ScimRepository, serverId: string): Promise<Response | null> {
+  const server = await repo.findServer(serverId)
+  return server ? null : allowResponse({ error: 'server_not_found' }, 404)
 }
 
 export async function apiCreateServer(request: Request, env: Env): Promise<Response> {
@@ -76,9 +81,9 @@ export async function apiGetServer(env: Env, serverId: string): Promise<Response
 
 export async function apiDeleteServer(env: Env, serverId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
   await repo.deleteServer(serverId)
   logger.info('[SCIM] Deleted server id="%s"', serverId)
@@ -87,9 +92,9 @@ export async function apiDeleteServer(env: Env, serverId: string): Promise<Respo
 
 export async function apiListUsers(env: Env, serverId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
   const users = await repo.listUsers(serverId)
   return allowResponse({ users, total: users.length })
@@ -97,9 +102,9 @@ export async function apiListUsers(env: Env, serverId: string): Promise<Response
 
 export async function apiCreateUser(request: Request, env: Env, serverId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
 
   const inputOrError = await parseBody(request, CreateUserInputSchema)
@@ -142,9 +147,9 @@ export async function apiCreateUser(request: Request, env: Env, serverId: string
 
 export async function apiUpdateUser(request: Request, env: Env, serverId: string, userId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
 
   const existing = await repo.findUser(serverId, userId)
@@ -188,9 +193,9 @@ export async function apiUpdateUser(request: Request, env: Env, serverId: string
 
 export async function apiDeleteUser(env: Env, serverId: string, userId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
 
   const existing = await repo.findUser(serverId, userId)
@@ -205,9 +210,9 @@ export async function apiDeleteUser(env: Env, serverId: string, userId: string):
 
 export async function apiListGroups(env: Env, serverId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
   const groups = await repo.listGroups(serverId)
   return allowResponse({ groups, total: groups.length })
@@ -215,9 +220,9 @@ export async function apiListGroups(env: Env, serverId: string): Promise<Respons
 
 export async function apiCreateGroup(request: Request, env: Env, serverId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
 
   const inputOrError = await parseBody(request, CreateGroupInputSchema)
@@ -252,9 +257,9 @@ export async function apiCreateGroup(request: Request, env: Env, serverId: strin
 
 export async function apiUpdateGroup(request: Request, env: Env, serverId: string, groupId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
 
   const existing = await repo.findGroup(serverId, groupId)
@@ -286,9 +291,9 @@ export async function apiUpdateGroup(request: Request, env: Env, serverId: strin
 
 export async function apiDeleteGroup(env: Env, serverId: string, groupId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
 
   const existing = await repo.findGroup(serverId, groupId)
@@ -336,9 +341,9 @@ export async function apiRemoveGroupMember(env: Env, serverId: string, groupId: 
 
 export async function apiGetScimOpenApiSpec(request: Request, env: Env, serverId: string): Promise<Response> {
   const repo = createRepository(env)
-  const server = await repo.findServer(serverId)
-  if (!server) {
-    return allowResponse({ error: 'server_not_found' }, 404)
+  const notFound = await requireServerExists(repo, serverId)
+  if (notFound) {
+    return notFound
   }
   const origin = new URL(request.url).origin
   const spec = buildScimOpenApiSpec(`${origin}/scim/${serverId}/v2`)

@@ -1,27 +1,15 @@
 <script setup lang="ts">
+import { TbCodeEditor } from '@components'
 import { computed, ref } from 'vue'
-import JsonAutoFixPanel from './JsonAutoFixPanel.vue'
-import JsonDiagnosticCard from './JsonDiagnosticCard.vue'
-import JsonEditor from './JsonEditor.vue'
 import JsonToolbar from './JsonToolbar.vue'
-import { resultToEditorStatus, validateJson } from './logic'
-import type { JsonEditorStatus } from './types'
+import { jsonLinterExtension } from './linter'
+import { validateJson } from './logic'
 
 const input = ref('')
 
 const result = computed(() => validateJson(input.value))
 
-const editorStatus = computed<JsonEditorStatus>(() => resultToEditorStatus(result.value))
-
-const errorLine = computed(() => {
-  if (result.value.kind !== 'invalid' || result.value.diagnostics.length === 0) {
-    return -1
-  } else {
-    return result.value.diagnostics[0]?.line ?? -1
-  }
-})
-
-const inputLines = computed(() => input.value.split('\n'))
+const extensions = [jsonLinterExtension]
 
 function applyFix() {
   if (result.value.kind === 'invalid' && result.value.fixedJson) {
@@ -56,42 +44,24 @@ function loadSample() {
     "spouse": null
   }`
 }
-
-function offendingLineAt(line: number): string | null {
-  return inputLines.value[line - 1] ?? null
-}
 </script>
 
 <template>
-  <div class="space-y-5">
-    <p class="text-sm text-text-secondary">Validate, format, and fix JSON. Errors are explained in plain English.</p>
+  <div class="tb-module-root">
+    <p class="tb-text-description">Validate, format, and fix JSON. Errors are explained in plain English.</p>
 
     <JsonToolbar
       :result="result"
       @format="format"
       @minify="minify"
       @load-sample="loadSample"
+      @apply-fix="applyFix"
     />
 
-    <JsonEditor
+    <TbCodeEditor
       v-model="input"
-      :status="editorStatus"
-      :error-line="errorLine"
+      :extensions="extensions"
+      placeholder="Paste your JSON here..."
     />
-
-    <div v-if="result.kind === 'invalid' && result.diagnostics.length > 0" class="space-y-3">
-      <JsonDiagnosticCard
-        v-for="(diagnostic, index) in result.diagnostics"
-        :key="index"
-        :diagnostic="diagnostic"
-        :offending-line="offendingLineAt(diagnostic.line)"
-      />
-
-      <JsonAutoFixPanel
-        v-if="result.fixedJson"
-        :fix-summary="result.fixSummary"
-        @apply-fix="applyFix"
-      />
-    </div>
   </div>
 </template>

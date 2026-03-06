@@ -5,7 +5,7 @@ export interface XorResult {
   binary?: string
   decimal?: number
   bytesHex?: string
-  error?: XorError | undefined
+  error?: XorError
 }
 
 export type XorInputFormat = 'hex' | 'ascii'

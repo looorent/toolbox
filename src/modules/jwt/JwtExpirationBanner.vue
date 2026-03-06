@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbStatusBanner } from '@components'
 import type { DecodedJwtSuccess } from './types'
 
 defineProps<{
@@ -8,14 +9,5 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    class="px-4 py-3 rounded-lg text-sm font-medium"
-    :class="{
-      'bg-success/10 text-success': expStatus === 'valid',
-      'bg-error/10 text-error': expStatus === 'expired',
-      'bg-warning/10 text-warning': expStatus === 'not-yet',
-    }"
-  >
-    {{ expInfo }}
-  </div>
+  <TbStatusBanner v-if="expStatus" :status="expStatus" :message="expInfo" />
 </template>

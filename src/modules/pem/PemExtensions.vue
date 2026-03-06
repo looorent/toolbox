@@ -1,33 +1,31 @@
 <script setup lang="ts">
-import CopyRow from '@components/CopyRow.vue'
+import { TbCard, TbKvTable } from '@components'
+import { computed } from 'vue'
 import { formatBasicConstraints } from './logic'
 
-defineProps<{
+const props = defineProps<{
   basicConstraints: { ca: boolean; pathLen?: number } | null
   keyUsage: string[] | null
   extendedKeyUsage: string[] | null
 }>()
+
+const entries = computed(() => {
+  const result: Array<{ key: string; value: string }> = []
+  if (props.basicConstraints) {
+    result.push({ key: 'Basic Constraints', value: formatBasicConstraints(props.basicConstraints) })
+  }
+  if (props.keyUsage) {
+    result.push({ key: 'Key Usage', value: props.keyUsage.join(', ') })
+  }
+  if (props.extendedKeyUsage) {
+    result.push({ key: 'Extended Key Usage', value: props.extendedKeyUsage.join(', ') })
+  }
+  return result
+})
 </script>
 
 <template>
-  <div v-if="keyUsage || extendedKeyUsage || basicConstraints" class="bg-surface-overlay border border-border rounded-lg p-4 space-y-3">
-    <h3 class="text-xs font-semibold uppercase tracking-wider text-text-muted">Extensions</h3>
-    <div class="space-y-2 text-sm">
-      <CopyRow v-if="basicConstraints" :value="formatBasicConstraints(basicConstraints)">
-        <span class="text-text-muted">Basic Constraints: </span>
-        <span class="font-mono text-text-primary">
-          CA={{ basicConstraints.ca }}
-          <template v-if="basicConstraints.pathLen !== undefined">, pathLen={{ basicConstraints.pathLen }}</template>
-        </span>
-      </CopyRow>
-      <CopyRow v-if="keyUsage" :value="keyUsage.join(', ')">
-        <span class="text-text-muted">Key Usage: </span>
-        <span class="font-mono text-text-primary">{{ keyUsage.join(', ') }}</span>
-      </CopyRow>
-      <CopyRow v-if="extendedKeyUsage" :value="extendedKeyUsage.join(', ')">
-        <span class="text-text-muted">Extended Key Usage: </span>
-        <span class="font-mono text-text-primary">{{ extendedKeyUsage.join(', ') }}</span>
-      </CopyRow>
-    </div>
-  </div>
+  <TbCard v-if="entries.length" title="Extensions">
+    <TbKvTable :entries="entries" copyable key-size="md" />
+  </TbCard>
 </template>

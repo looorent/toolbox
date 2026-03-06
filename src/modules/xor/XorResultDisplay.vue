@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import CopyCodeBlock from '@components/CopyCodeBlock.vue'
-import CopyStatCard from '@components/CopyStatCard.vue'
+import { TbCodeBlock, TbStatCard } from '@components'
 import type { XorResult } from './types'
 
 defineProps<{ result: XorResult }>()
 </script>
 
 <template>
-  <div v-if="result.error" class="bg-error/10 border border-error/30 rounded-lg px-4 py-3 text-sm text-error">
+  <div v-if="result.error" role="alert" class="tb-alert tb-alert--error">
     {{ result.error }}
   </div>
 
   <template v-else>
-    <CopyCodeBlock title="Input Bytes" :value="result.bytesHex ?? ''" />
+    <TbCodeBlock title="Input Bytes" :value="result.bytesHex ?? ''" :copyable="true" />
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <CopyStatCard title="Hex" :value="result.hex ?? ''" value-class="text-lg font-mono font-bold text-accent" />
-      <CopyStatCard title="Decimal" :value="`${result.decimal ?? ''}`" value-class="text-lg font-mono font-bold text-text-primary" />
-      <CopyStatCard title="Binary" :value="result.binary ?? ''" value-class="text-lg font-mono font-bold text-text-primary" />
+    <div class="tb-grid-3">
+      <TbStatCard title="Hex" :value="result.hex ?? ''" value-class="tb-text-lg tb-font-mono tb-font-bold tb-text-accent" />
+      <TbStatCard title="Decimal" :value="`${result.decimal ?? ''}`" value-class="tb-text-lg tb-font-mono tb-font-bold tb-text-primary" />
+      <TbStatCard title="Binary" :value="result.binary ?? ''" value-class="tb-text-lg tb-font-mono tb-font-bold tb-text-primary" />
     </div>
   </template>
 </template>

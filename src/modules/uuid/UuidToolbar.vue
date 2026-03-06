@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbButton, TbInput } from '@components'
 import { useCopy } from '@composables/useCopy'
 
 const props = defineProps<{
@@ -16,33 +17,20 @@ async function copyAll() {
 </script>
 
 <template>
-  <div class="flex items-center gap-4">
-    <div class="flex items-center gap-2">
-      <label class="text-sm text-text-secondary">Count</label>
-      <input
-        v-model.number="count"
-        type="number"
-        min="1"
-        max="100"
-        class="w-20 bg-surface-overlay border border-border rounded-lg px-3 py-2 text-sm font-mono text-text-primary focus:outline-none focus:border-border-focus transition-colors"
-      />
+  <div class="tb-row tb-row--gap-4">
+    <div class="tb-row tb-row--gap-2">
+      <label class="tb-text-description">Count</label>
+      <TbInput v-model.number="count" type="number" min="1" max="100" class="tb-input--small tb-w-20" />
     </div>
 
-    <button
-      type="button"
-      @click="emit('generate')"
-      class="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
-    >
-      Generate
-    </button>
+    <TbButton @click="emit('generate')">Generate</TbButton>
 
-    <button
+    <TbButton
       v-if="uuids.length > 1"
-      type="button"
+      variant="secondary"
       @click="copyAll"
-      class="px-4 py-2 bg-surface-overlay hover:bg-border text-text-secondary text-sm font-medium rounded-lg border border-border transition-colors cursor-pointer"
     >
       {{ copied ? 'Copied!' : 'Copy All' }}
-    </button>
+    </TbButton>
   </div>
 </template>

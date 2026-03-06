@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbButton, TbFieldInput } from '@components'
 import { computed, ref } from 'vue'
 import JwtClaimSection from './JwtClaimSection.vue'
 import JwtExpirationBanner from './JwtExpirationBanner.vue'
@@ -16,29 +17,21 @@ function loadSample() {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div>
-      <div class="flex items-center justify-between mb-2">
-        <label class="text-sm text-text-secondary">Paste JWT token</label>
-        <button
-          v-if="!token.trim()"
-          type="button"
-          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-overlay text-text-secondary hover:text-text-primary border border-border transition-colors"
-          @click="loadSample"
-        >
-          Load sample
-        </button>
-      </div>
-      <textarea
-        v-model="token"
-        placeholder="eyJhbGciOiJIUzI1NiIs..."
-        rows="4"
-        class="w-full bg-surface-overlay border border-border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none focus:border-border-focus transition-colors resize-y"
-      />
-    </div>
+  <div class="tb-stack-6">
+    <TbFieldInput
+      v-model="token"
+      label="Paste JWT token"
+      multiline
+      :rows="4"
+      placeholder="eyJhbGciOiJIUzI1NiIs..."
+    >
+      <template #actions>
+        <TbButton v-if="!token.trim()" variant="secondary" size="sm" @click="loadSample">Load sample</TbButton>
+      </template>
+    </TbFieldInput>
 
     <template v-if="decoded">
-      <div v-if="decoded.kind === 'error'" class="bg-error/10 border border-error/30 rounded-lg px-4 py-3 text-sm text-error">
+      <div v-if="decoded.kind === 'error'" role="alert" class="tb-alert tb-alert--error">
         {{ decoded.message }}
       </div>
 
@@ -53,7 +46,7 @@ function loadSample() {
 
         <JwtClaimSection
           title="Header"
-          color="text-red-400"
+          color="tb-text-jwt-header"
           :data="decoded.header"
           :labels="HEADER_LABELS"
           :format-value="formatHeaderValue"
@@ -61,7 +54,7 @@ function loadSample() {
 
         <JwtClaimSection
           title="Payload"
-          color="text-purple-400"
+          color="tb-text-jwt-payload"
           :data="decoded.payload"
           :labels="CLAIM_LABELS"
           :format-value="formatClaimValue"

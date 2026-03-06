@@ -22,11 +22,11 @@ const verticalGridLines = computed(() => gridLines(parsedViewBox.value.y, parsed
 </script>
 
 <template>
-  <div class="bg-surface-overlay border border-border rounded-lg p-4 flex items-center justify-center min-h-75">
+  <div class="tb-card tb-flex-center tb-preview-panel--lg">
     <svg
       v-if="validPath"
       :viewBox="viewBox"
-      class="w-full h-auto max-h-125"
+      class="tb-preview-media--full"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="SVG path preview"
@@ -69,6 +69,6 @@ const verticalGridLines = computed(() => gridLines(parsedViewBox.value.y, parsed
         :stroke-width="Math.max(parsedViewBox.width, parsedViewBox.height) * 0.008"
       />
     </svg>
-    <p v-else class="text-sm text-text-muted">Paste a path to see the preview</p>
+    <p v-else class="tb-text-sm tb-text-muted">Paste a path to see the preview</p>
   </div>
 </template>

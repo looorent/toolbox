@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyButton from '@components/CopyButton.vue'
+import { TbFieldInput } from '@components'
 import { type Ref, ref, watch } from 'vue'
 import { convertNumber } from './logic'
 import type { Radix } from './types'
@@ -55,23 +55,19 @@ for (const field of fields) {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <p class="text-sm text-text-secondary">Type a value in any field and the others update automatically.</p>
+  <div class="tb-stack-6">
+    <p class="tb-text-description">Type a value in any field and the others update automatically.</p>
 
-    <div class="space-y-4">
-      <div v-for="field in fields" :key="field.key">
-        <label class="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">{{ field.label }}</label>
-        <div class="relative">
-          <input
-            v-model="field.model.value"
-            type="text"
-            :inputmode="field.inputmode"
-            :placeholder="field.placeholder"
-            class="w-full bg-surface-overlay border border-border rounded-lg px-4 py-3 pr-16 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none focus:border-border-focus transition-colors"
-          />
-          <CopyButton v-if="field.model.value" :value="field.model.value" class="absolute right-2 top-1/2 -translate-y-1/2" />
-        </div>
-      </div>
+    <div class="tb-grid-2">
+      <TbFieldInput
+        v-for="field in fields"
+        :key="field.key"
+        :label="field.label"
+        v-model="field.model.value"
+        :placeholder="field.placeholder"
+        :inputmode="field.inputmode"
+        copyable
+      />
     </div>
   </div>
 </template>

@@ -315,11 +315,7 @@ export interface PatchOp {
 }
 
 export function applyPatchToUser(user: ScimUser, operations: PatchOperation[]): ScimUser {
-  let result: ScimUser = { ...user }
-  for (const operation of operations) {
-    result = applyUserOperation(result, operation)
-  }
-  return result
+  return operations.reduce((result, operation) => applyUserOperation(result, operation), { ...user })
 }
 
 function applyUserOperation(user: ScimUser, operation: PatchOperation): ScimUser {
@@ -382,11 +378,10 @@ function applyUserOperation(user: ScimUser, operation: PatchOperation): ScimUser
 }
 
 function applyUserAttributeMap(user: ScimUser, attrs: Record<string, unknown>): ScimUser {
-  let result = { ...user }
-  for (const [key, value] of Object.entries(attrs)) {
-    result = applyUserOperation(result, { op: 'replace', path: key.toLowerCase(), value })
-  }
-  return result
+  return Object.entries(attrs).reduce(
+    (result, [key, value]) => applyUserOperation(result, { op: 'replace', path: key.toLowerCase(), value }),
+    { ...user },
+  )
 }
 
 export type MemberPatch =

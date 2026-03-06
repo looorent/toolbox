@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCopy } from '@composables/useCopy'
+import { TbButton, TbCheckbox, TbCopyId, TbInput, TbSelect } from '@components'
 import { ref } from 'vue'
 import { getUserDisplayName, getUserPrimaryEmail } from './logic'
 import type { CreateUserInput, ScimGroup, ScimUser, UpdateUserInput } from './types'
@@ -16,10 +16,8 @@ const emit = defineEmits<{
   deleteUser: [userId: string]
 }>()
 
-const { copy, copiedKey } = useCopy()
-
 const showCreateForm = ref(false)
-const editingUserId = ref<string | null>(null)
+const expandedUserId = ref<string | null>(null)
 
 const createForm = ref<CreateUserInput>({ userName: '', displayName: '', externalId: '', givenName: '', middleName: '', familyName: '', emails: [{ value: '', type: 'work', primary: true }], title: '', preferredLanguage: '', locale: '', timezone: '', active: true })
 const editForm = ref<UpdateUserInput>({})
@@ -27,31 +25,35 @@ const editForm = ref<UpdateUserInput>({})
 function openCreateForm(): void {
   createForm.value = { userName: '', displayName: '', externalId: '', givenName: '', middleName: '', familyName: '', emails: [{ value: '', type: 'work', primary: true }], title: '', preferredLanguage: '', locale: '', timezone: '', active: true }
   showCreateForm.value = true
-  editingUserId.value = null
+  expandedUserId.value = null
 }
 
-function openEditForm(user: ScimUser): void {
-  editForm.value = {
-    userName: user.userName,
-    displayName: user.displayName ?? '',
-    externalId: user.externalId ?? '',
-    givenName: user.name?.givenName ?? '',
-    middleName: user.name?.middleName ?? '',
-    familyName: user.name?.familyName ?? '',
-    emails: user.emails && user.emails.length > 0 ? user.emails.map(email => ({ ...email })) : [{ value: '', type: 'work', primary: true }],
-    title: user.title ?? '',
-    preferredLanguage: user.preferredLanguage ?? '',
-    locale: user.locale ?? '',
-    timezone: user.timezone ?? '',
-    active: user.active,
+function toggleExpand(user: ScimUser): void {
+  if (expandedUserId.value === user.id) {
+    expandedUserId.value = null
+  } else {
+    editForm.value = {
+      userName: user.userName,
+      displayName: user.displayName ?? '',
+      externalId: user.externalId ?? '',
+      givenName: user.name?.givenName ?? '',
+      middleName: user.name?.middleName ?? '',
+      familyName: user.name?.familyName ?? '',
+      emails: user.emails && user.emails.length > 0 ? user.emails.map(email => ({ ...email })) : [{ value: '', type: 'work', primary: true }],
+      title: user.title ?? '',
+      preferredLanguage: user.preferredLanguage ?? '',
+      locale: user.locale ?? '',
+      timezone: user.timezone ?? '',
+      active: user.active,
+    }
+    expandedUserId.value = user.id
+    showCreateForm.value = false
   }
-  editingUserId.value = user.id
-  showCreateForm.value = false
 }
 
 function cancelForms(): void {
   showCreateForm.value = false
-  editingUserId.value = null
+  expandedUserId.value = null
 }
 
 function submitCreate(): void {
@@ -64,7 +66,7 @@ function submitCreate(): void {
 
 function submitEdit(userId: string): void {
   emit('updateUser', userId, { ...editForm.value })
-  editingUserId.value = null
+  expandedUserId.value = null
 }
 
 function addEmailToCreate(): void {
@@ -106,374 +108,327 @@ function getGroupNames(user: ScimUser): string {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-text-primary">
+  <div class="tb-stack-4">
+    <div class="tb-row tb-row--between">
+      <h2 class="tb-section-title">
         Users
-        <span class="ml-1.5 px-1.5 py-0.5 text-xs font-normal bg-surface-raised border border-border rounded text-text-muted">{{ users.length }}</span>
+        <span class="tb-badge tb-ml-3">{{ users.length }}</span>
       </h2>
-      <button
-        type="button"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent/10 border border-accent/20 text-accent hover:bg-accent/20 transition-colors cursor-pointer"
+      <TbButton
+        variant="secondary"
+        size="sm"
         @click="openCreateForm"
       >
         + Add User
-      </button>
+      </TbButton>
     </div>
 
     <!-- Create form -->
-    <div v-if="showCreateForm" class="p-4 bg-surface-raised rounded-lg border border-accent/30">
-      <h3 class="text-xs font-semibold text-text-primary mb-3">New User</h3>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="col-span-2">
-          <label class="block text-xs text-text-muted mb-1">Username <span class="text-error">*</span></label>
-          <input
-            v-model="createForm.userName"
-            class="w-full px-2.5 py-1.5 text-xs font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="alice.johnson"
-            @keydown.enter="submitCreate"
-            @keydown.esc="cancelForms"
-          />
+    <div v-if="showCreateForm" class="tb-card--accent">
+      <div class="tb-row tb-row--between tb-mb-6">
+        <h3 class="tb-section-subtitle">New User</h3>
+        <div class="tb-row tb-row--gap-2">
+          <TbButton variant="primary" size="sm" @click="submitCreate">Create</TbButton>
+          <TbButton variant="secondary" size="sm" @click="cancelForms">Cancel</TbButton>
         </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Display Name</label>
-          <input
-            v-model="createForm.displayName"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="Alice Johnson"
-          />
-        </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">External ID</label>
-          <input
-            v-model="createForm.externalId"
-            class="w-full px-2.5 py-1.5 text-xs font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="ext-123"
-          />
-        </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">First Name</label>
-          <input
-            v-model="createForm.givenName"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="Alice"
-          />
-        </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Last Name</label>
-          <input
-            v-model="createForm.familyName"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="Johnson"
-          />
-        </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Middle Name</label>
-          <input
-            v-model="createForm.middleName"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="Marie"
-          />
-        </div>
-        <div class="col-span-2">
-          <div class="flex items-center justify-between mb-1">
-            <label class="text-xs text-text-muted">Emails</label>
-            <button
-              type="button"
-              class="px-1.5 py-0.5 text-[11px] rounded border bg-surface border-border text-text-muted hover:border-border-focus hover:text-text-secondary transition-colors cursor-pointer"
-              @click="addEmailToCreate"
-            >
-              + Add
-            </button>
+      </div>
+      <div class="tb-kv-table tb-kv-table--form">
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Username <span class="tb-text-error">*</span></span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.userName" class="tb-font-mono" placeholder="alice.johnson" @keydown.enter="submitCreate" @keydown.esc="cancelForms" />
           </div>
-          <div class="flex flex-col gap-1.5">
-            <div
-              v-for="(email, index) in (createForm.emails ?? [])"
-              :key="index"
-              class="flex items-center gap-1.5"
-            >
-              <input
-                v-model="email.value"
-                type="email"
-                class="flex-1 px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-                placeholder="alice@example.com"
-              />
-              <select
-                v-model="email.type"
-                class="w-20 px-2 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary"
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Display Name</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.displayName" placeholder="Alice Johnson" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">External ID</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.externalId" class="tb-font-mono" placeholder="ext-123" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">First Name</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.givenName" placeholder="Alice" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Middle Name</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.middleName" placeholder="Marie" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Last Name</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.familyName" placeholder="Johnson" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Title</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.title" placeholder="Software Engineer" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Language</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.preferredLanguage" placeholder="en-US" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Locale</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.locale" placeholder="en-US" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Timezone</span>
+          <div class="tb-kv-table__value">
+            <TbInput v-model="createForm.timezone" placeholder="America/New_York" />
+          </div>
+        </div>
+        <div class="tb-kv-table__row tb-kv-table__row--top">
+          <span class="tb-kv-table__key">
+            Emails
+            <button type="button" class="tb-btn-mini tb-ml-auto" @click="addEmailToCreate">+</button>
+          </span>
+          <div class="tb-kv-table__value tb-kv-table__value--padded">
+            <div class="tb-stack-3">
+              <div
+                v-for="(email, index) in (createForm.emails ?? [])"
+                :key="index"
+                class="tb-row tb-row--gap-3"
               >
-                <option value="work">work</option>
-                <option value="home">home</option>
-                <option value="other">other</option>
-              </select>
-              <button
-                type="button"
-                class="shrink-0 px-1.5 py-0.5 text-[10px] rounded border cursor-pointer transition-colors"
-                :class="email.primary ? 'bg-accent/10 border-accent/20 text-accent' : 'bg-surface border-border text-text-muted hover:border-border-focus'"
-                title="Set as primary"
-                @click="setPrimaryCreateEmail(index)"
-              >
-                primary
-              </button>
-              <button
-                type="button"
-                class="shrink-0 p-1 text-text-muted hover:text-error transition-colors cursor-pointer"
-                @click="removeEmailFromCreate(index)"
-              >
-                <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+                <TbInput
+                  v-model="email.value"
+                  type="email"
+                  size="sm"
+                  class="tb-flex-1"
+                  placeholder="alice@example.com"
+                />
+                <TbSelect v-model="email.type" class="tb-w-20">
+                  <option value="work">work</option>
+                  <option value="home">home</option>
+                  <option value="other">other</option>
+                </TbSelect>
+                <button
+                  type="button"
+                  class="tb-chip"
+                  :class="email.primary ? 'tb-chip--active' : ''"
+                  @click="setPrimaryCreateEmail(index)"
+                >
+                  primary
+                </button>
+                <button
+                  type="button"
+                  class="tb-btn-icon tb-btn-icon--danger"
+                  aria-label="Remove email"
+                  @click="removeEmailFromCreate(index)"
+                >
+                  <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Title</label>
-          <input
-            v-model="createForm.title"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="Software Engineer"
-          />
+        <div class="tb-kv-table__row">
+          <span class="tb-kv-table__key">Active</span>
+          <div class="tb-kv-table__value tb-kv-table__value--padded">
+            <TbCheckbox v-model="createForm.active" label="Enabled" />
+          </div>
         </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Preferred Language</label>
-          <input
-            v-model="createForm.preferredLanguage"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="en-US"
-          />
-        </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Locale</label>
-          <input
-            v-model="createForm.locale"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="en-US"
-          />
-        </div>
-        <div>
-          <label class="block text-xs text-text-muted mb-1">Timezone</label>
-          <input
-            v-model="createForm.timezone"
-            class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-            placeholder="America/New_York"
-          />
-        </div>
-        <div class="col-span-2 flex items-center gap-2">
-          <input id="create-active" v-model="createForm.active" type="checkbox" class="rounded" />
-          <label for="create-active" class="text-xs text-text-secondary">Active</label>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 mt-3">
-        <button
-          type="button"
-          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent text-white hover:opacity-90 transition-opacity cursor-pointer"
-          @click="submitCreate"
-        >
-          Create
-        </button>
-        <button
-          type="button"
-          class="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface border border-border text-text-secondary hover:border-border-focus transition-colors cursor-pointer"
-          @click="cancelForms"
-        >
-          Cancel
-        </button>
       </div>
     </div>
 
     <!-- Loading -->
-    <div v-if="isLoading" class="text-center py-8 text-text-muted text-xs">Loading users…</div>
+    <div v-if="isLoading" class="tb-empty-text">Loading users…</div>
 
     <!-- Empty state -->
-    <div v-else-if="users.length === 0 && !showCreateForm" class="text-center py-8 text-text-muted text-xs">
+    <div v-else-if="users.length === 0 && !showCreateForm" class="tb-empty-text">
       No users yet. Click "Add User" to create the first one.
     </div>
 
     <!-- User list -->
-    <div v-else class="flex flex-col gap-1">
+    <div v-else class="tb-stack-1">
       <div
         v-for="user in users"
         :key="user.id"
-        class="group rounded-lg border border-border bg-surface-raised overflow-hidden"
+        class="tb-expandable"
       >
-        <!-- Edit form for this user -->
-        <div v-if="editingUserId === user.id" class="p-4">
-          <h3 class="text-xs font-semibold text-text-primary mb-3">Edit User</h3>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="col-span-2">
-              <label class="block text-xs text-text-muted mb-1">Username <span class="text-error">*</span></label>
-              <input
-                v-model="editForm.userName"
-                class="w-full px-2.5 py-1.5 text-xs font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary"
-                @keydown.esc="cancelForms"
-              />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Display Name</label>
-              <input v-model="editForm.displayName" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">External ID</label>
-              <input v-model="editForm.externalId" class="w-full px-2.5 py-1.5 text-xs font-mono bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">First Name</label>
-              <input v-model="editForm.givenName" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Last Name</label>
-              <input v-model="editForm.familyName" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Middle Name</label>
-              <input v-model="editForm.middleName" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div class="col-span-2">
-              <div class="flex items-center justify-between mb-1">
-                <label class="text-xs text-text-muted">Emails</label>
-                <button
-                  type="button"
-                  class="px-1.5 py-0.5 text-[11px] rounded border bg-surface border-border text-text-muted hover:border-border-focus hover:text-text-secondary transition-colors cursor-pointer"
-                  @click="addEmailToEdit"
-                >
-                  + Add
-                </button>
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <div
-                  v-for="(email, index) in (editForm.emails ?? [])"
-                  :key="index"
-                  class="flex items-center gap-1.5"
-                >
-                  <input
-                    v-model="email.value"
-                    type="email"
-                    class="flex-1 px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary placeholder-text-muted"
-                    placeholder="alice@example.com"
-                  />
-                  <select
-                    v-model="email.type"
-                    class="w-20 px-2 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary"
-                  >
-                    <option value="work">work</option>
-                    <option value="home">home</option>
-                    <option value="other">other</option>
-                  </select>
-                  <button
-                    type="button"
-                    class="shrink-0 px-1.5 py-0.5 text-[10px] rounded border cursor-pointer transition-colors"
-                    :class="email.primary ? 'bg-accent/10 border-accent/20 text-accent' : 'bg-surface border-border text-text-muted hover:border-border-focus'"
-                    title="Set as primary"
-                    @click="setPrimaryEditEmail(index)"
-                  >
-                    primary
-                  </button>
-                  <button
-                    type="button"
-                    class="shrink-0 p-1 text-text-muted hover:text-error transition-colors cursor-pointer"
-                    @click="removeEmailFromEdit(index)"
-                  >
-                    <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Title</label>
-              <input v-model="editForm.title" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Preferred Language</label>
-              <input v-model="editForm.preferredLanguage" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Locale</label>
-              <input v-model="editForm.locale" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div>
-              <label class="block text-xs text-text-muted mb-1">Timezone</label>
-              <input v-model="editForm.timezone" class="w-full px-2.5 py-1.5 text-xs bg-surface border border-border rounded focus:outline-none focus:border-border-focus text-text-primary" />
-            </div>
-            <div class="col-span-2 flex items-center gap-2">
-              <input :id="`edit-active-${user.id}`" v-model="editForm.active" type="checkbox" class="rounded" />
-              <label :for="`edit-active-${user.id}`" class="text-xs text-text-secondary">Active</label>
-            </div>
+        <!-- User row (expandable header) -->
+        <div class="tb-group tb-expandable__header" @click="toggleExpand(user)">
+          <svg
+            class="tb-icon-md tb-chevron"
+            :class="{ 'tb-chevron--open': expandedUserId === user.id }"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <div class="tb-avatar">
+            <span class="tb-text-xs tb-font-semibold tb-text-accent">{{ getUserDisplayName(user).charAt(0).toUpperCase() }}</span>
           </div>
-          <div class="flex items-center gap-2 mt-3">
-            <button
-              type="button"
-              class="px-3 py-1.5 text-xs font-medium rounded-lg bg-accent text-white hover:opacity-90 transition-opacity cursor-pointer"
-              @click="submitEdit(user.id)"
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              class="px-3 py-1.5 text-xs font-medium rounded-lg bg-surface border border-border text-text-secondary hover:border-border-focus transition-colors cursor-pointer"
-              @click="cancelForms"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-
-        <!-- User row -->
-        <div v-else class="flex items-center gap-3 px-4 py-3">
-          <div class="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center shrink-0">
-            <span class="text-xs font-semibold text-accent">{{ getUserDisplayName(user).charAt(0).toUpperCase() }}</span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-text-primary truncate">{{ getUserDisplayName(user) }}</span>
+          <div class="tb-flex-fill">
+            <div class="tb-row tb-row--gap-2">
+              <span class="tb-text-sm tb-font-medium tb-text-primary tb-truncate">{{ getUserDisplayName(user) }}</span>
               <span
-                class="shrink-0 px-1.5 py-0.5 text-xs rounded-full"
-                :class="user.active ? 'bg-success/10 text-success border border-success/20' : 'bg-surface-overlay border border-border text-text-muted'"
+                class="tb-badge"
+                :class="user.active ? 'tb-badge--valid' : ''"
               >
                 {{ user.active ? 'Active' : 'Inactive' }}
               </span>
+              <TbCopyId :value="user.id" />
             </div>
-            <div class="flex items-center gap-3 mt-0.5">
-              <span class="text-xs font-mono text-text-muted truncate">{{ user.userName }}</span>
-              <span v-if="getUserPrimaryEmail(user)" class="text-xs text-text-muted truncate">{{ getUserPrimaryEmail(user) }}</span>
-              <span v-if="getGroupNames(user)" class="text-xs text-text-muted truncate">{{ getGroupNames(user) }}</span>
-              <button
-                type="button"
-                class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded border font-mono text-xs transition-colors cursor-pointer"
-                :class="copiedKey === user.id ? 'bg-success/10 border-success/20 text-success' : 'bg-surface border-border text-text-muted hover:border-border-focus hover:text-text-secondary'"
-                :title="user.id"
-                @click.stop="copy(user.id, user.id)"
-              >
-                <span>{{ copiedKey === user.id ? 'copied!' : `${user.id.slice(0, 8)}…` }}</span>
-                <svg v-if="copiedKey !== user.id" class="w-3 h-3 shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              </button>
+            <div class="tb-row tb-row--gap-3 tb-mt-1">
+              <span class="tb-code-inline tb-text-muted tb-truncate">{{ user.userName }}</span>
+              <span v-if="getUserPrimaryEmail(user)" class="tb-hint tb-truncate">{{ getUserPrimaryEmail(user) }}</span>
+              <span v-if="getGroupNames(user)" class="tb-hint tb-truncate">{{ getGroupNames(user) }}</span>
             </div>
           </div>
-          <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-            <button
-              type="button"
-              class="p-1.5 rounded text-text-muted hover:text-text-primary hover:bg-surface-overlay transition-colors cursor-pointer"
-              title="Edit user"
-              @click="openEditForm(user)"
-            >
-              <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              class="p-1.5 rounded text-text-muted hover:text-error hover:bg-error/10 transition-colors cursor-pointer"
-              title="Delete user"
-              @click="emit('deleteUser', user.id)"
-            >
-              <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
+          <button
+            type="button"
+            class="tb-btn-icon tb-btn-icon--danger tb-flex-shrink-0 tb-group-hover-visible"
+            aria-label="Delete user"
+            @click.stop="emit('deleteUser', user.id)"
+          >
+            <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Edit form (expandable body) -->
+        <div v-if="expandedUserId === user.id" class="tb-expandable__body">
+          <div class="tb-row tb-row--between tb-mb-6">
+            <span class="tb-hint">Edit fields and save</span>
+            <div class="tb-row tb-row--gap-2">
+              <TbButton variant="primary" size="sm" @click="submitEdit(user.id)">Save</TbButton>
+              <TbButton variant="secondary" size="sm" @click="cancelForms">Cancel</TbButton>
+            </div>
+          </div>
+          <div class="tb-kv-table tb-kv-table--form">
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Username <span class="tb-text-error">*</span></span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.userName" class="tb-font-mono" @keydown.esc="cancelForms" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Display Name</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.displayName" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">External ID</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.externalId" class="tb-font-mono" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">First Name</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.givenName" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Middle Name</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.middleName" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Last Name</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.familyName" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Title</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.title" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Language</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.preferredLanguage" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Locale</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.locale" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Timezone</span>
+              <div class="tb-kv-table__value">
+                <TbInput v-model="editForm.timezone" />
+              </div>
+            </div>
+            <div class="tb-kv-table__row tb-kv-table__row--top">
+              <span class="tb-kv-table__key">
+                Emails
+                <button type="button" class="tb-btn-mini tb-ml-auto" @click="addEmailToEdit">+</button>
+              </span>
+              <div class="tb-kv-table__value tb-kv-table__value--padded">
+                <div class="tb-stack-3">
+                  <div
+                    v-for="(email, index) in (editForm.emails ?? [])"
+                    :key="index"
+                    class="tb-row tb-row--gap-3"
+                  >
+                    <TbInput
+                      v-model="email.value"
+                      type="email"
+                      size="sm"
+                      class="tb-flex-1"
+                      placeholder="alice@example.com"
+                    />
+                    <TbSelect v-model="email.type" class="tb-w-20">
+                      <option value="work">work</option>
+                      <option value="home">home</option>
+                      <option value="other">other</option>
+                    </TbSelect>
+                    <button
+                      type="button"
+                      class="tb-chip"
+                      :class="email.primary ? 'tb-chip--active' : ''"
+                      @click="setPrimaryEditEmail(index)"
+                    >
+                      primary
+                    </button>
+                    <button
+                      type="button"
+                      class="tb-btn-icon tb-btn-icon--danger"
+                      aria-label="Remove email"
+                      @click="removeEmailFromEdit(index)"
+                    >
+                      <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tb-kv-table__row">
+              <span class="tb-kv-table__key">Active</span>
+              <div class="tb-kv-table__value tb-kv-table__value--padded">
+                <TbCheckbox v-model="editForm.active" label="Enabled" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

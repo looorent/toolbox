@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbFieldInput } from '@components'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import EpochResultGrid from './EpochResultGrid.vue'
 import { allTimeZones, buildTimezoneField, dateToTimestamp, localTimeZone, millisecondsToDate, parseHumanDate, RESULT_FIELDS } from './logic'
@@ -53,7 +54,7 @@ watch(secondsInput, newSecondsInput => {
         error.value = true
       }
     }
-  
+
     requestAnimationFrame(() => { updating.value = false })
   }
 })
@@ -81,7 +82,7 @@ watch(millisecondsInput, newMillisecondsInput => {
         error.value = true
       }
     }
-  
+
     requestAnimationFrame(() => { updating.value = false })
   }
 })
@@ -89,7 +90,7 @@ watch(millisecondsInput, newMillisecondsInput => {
 watch(dateInput, newDateInput => {
   if (updating.value) {
     updating.value = true
-  
+
     if (!newDateInput.trim()) {
       result.value = null
       error.value = false
@@ -107,7 +108,7 @@ watch(dateInput, newDateInput => {
         error.value = true
       }
     }
-  
+
     requestAnimationFrame(() => { updating.value = false })
   }
 })
@@ -150,16 +151,14 @@ onUnmounted(stopLive)
 </script>
 
 <template>
-  <div class="space-y-6">
-    <p class="text-sm text-text-secondary">Convert between Unix timestamps and human-readable dates.</p>
+  <div class="tb-stack-6">
+    <p class="tb-text-description">Convert between Unix timestamps and human-readable dates.</p>
 
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="tb-row tb-row--gap-3 tb-row--wrap">
       <button
         type="button"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
-        :class="liveTimer
-          ? 'bg-accent text-white'
-          : 'bg-surface-overlay text-text-secondary hover:text-text-primary border border-border'"
+        class="tb-btn-pill tb-btn-pill--sm"
+        :class="{ 'tb-btn-pill--active': liveTimer }"
         @click="fillNow"
       >
         {{ liveTimer ? 'Live ·' : 'Now' }}
@@ -168,40 +167,31 @@ onUnmounted(stopLive)
       <TimezoneDropdown v-model="selectedTimezone" :timezones="timezones" />
     </div>
 
-    <div class="space-y-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">Seconds</label>
-          <input
-            v-model="secondsInput"
-            placeholder="1700000000"
-            class="w-full bg-surface-overlay border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none transition-colors"
-            :class="error && secondsInput.trim() ? 'border-error' : 'border-border focus:border-border-focus'"
-          />
-        </div>
+    <div class="tb-stack-4">
+      <div class="tb-grid-2">
+        <TbFieldInput
+          label="Seconds"
+          v-model="secondsInput"
+          placeholder="1700000000"
+          :error="error && !!secondsInput.trim()"
+        />
 
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">Milliseconds</label>
-          <input
-            v-model="millisecondsInput"
-            placeholder="1700000000000"
-            class="w-full bg-surface-overlay border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none transition-colors"
-            :class="error && millisecondsInput.trim() ? 'border-error' : 'border-border focus:border-border-focus'"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">Human-readable Date</label>
-        <input
-          v-model="dateInput"
-          placeholder="2025-01-15T10:30:00Z or Jan 15, 2025"
-          class="w-full bg-surface-overlay border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none transition-colors"
-          :class="error && dateInput.trim() ? 'border-error' : 'border-border focus:border-border-focus'"
+        <TbFieldInput
+          label="Milliseconds"
+          v-model="millisecondsInput"
+          placeholder="1700000000000"
+          :error="error && !!millisecondsInput.trim()"
         />
       </div>
 
-      <p v-if="error" class="text-xs text-error">Invalid input — enter a numeric timestamp or a recognizable date string.</p>
+      <TbFieldInput
+        label="Human-readable Date"
+        v-model="dateInput"
+        placeholder="2025-01-15T10:30:00Z or Jan 15, 2025"
+        :error="error && !!dateInput.trim()"
+      />
+
+      <p v-if="error" role="alert" class="tb-error-text">Invalid input — enter a numeric timestamp or a recognizable date string.</p>
     </div>
 
     <EpochResultGrid

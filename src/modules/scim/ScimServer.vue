@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { TbOptionGroup, type TbOptionGroupOption } from '@components'
 import type { CreateGroupInput, CreateUserInput, ScimGroup, ScimUser, UpdateGroupInput, UpdateUserInput } from '@shared/modules/scim/types'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   createGroup,
@@ -216,13 +217,16 @@ watch(
   },
 )
 
-function setActiveTab(tab: ActiveTab): void {
-  activeTab.value = tab
-}
+const tabOptions = computed((): TbOptionGroupOption[] => [
+  { label: 'Users', value: 'users', badge: users.value.length },
+  { label: 'Groups', value: 'groups', badge: groups.value.length },
+  { label: 'API Docs', value: 'api' },
+  { label: 'Compliance', value: 'compliance' },
+])
 </script>
 
 <template>
-  <div class="flex flex-col h-full gap-6">
+  <div class="tb-module-root">
     <!-- Landing page (no server yet) -->
     <ScimLanding
       v-if="!serverId"
@@ -232,7 +236,7 @@ function setActiveTab(tab: ActiveTab): void {
     />
 
     <!-- Server view -->
-    <div v-else class="flex flex-col flex-1 gap-4 min-h-0">
+    <div v-else class="tb-module-body">
       <ScimToolbar
         :server-name="server?.name ?? '…'"
         :scim-base-url="scimBaseUrl"
@@ -243,34 +247,13 @@ function setActiveTab(tab: ActiveTab): void {
         @delete="handleDeleteServer"
       />
 
-      <p v-if="loadError" class="text-sm text-error">{{ loadError }}</p>
+      <p v-if="loadError" role="alert" class="tb-text-sm tb-text-error">{{ loadError }}</p>
 
       <!-- Tabs -->
-      <div class="flex items-center gap-1 border-b border-border">
-        <button
-          v-for="tab in (['users', 'groups', 'api', 'compliance'] as ActiveTab[])"
-          :key="tab"
-          type="button"
-          class="px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px cursor-pointer"
-          :class="activeTab === tab
-            ? 'text-text-primary border-accent'
-            : 'text-text-muted border-transparent hover:text-text-secondary'"
-          @click="setActiveTab(tab)"
-        >
-          <span class="capitalize">{{ tab === 'api' ? 'API Docs' : tab === 'compliance' ? 'Compliance' : tab }}</span>
-          <span
-            v-if="tab === 'users'"
-            class="ml-1.5 px-1.5 py-0.5 text-xs font-normal bg-surface-raised border border-border rounded"
-          >{{ users.length }}</span>
-          <span
-            v-else-if="tab === 'groups'"
-            class="ml-1.5 px-1.5 py-0.5 text-xs font-normal bg-surface-raised border border-border rounded"
-          >{{ groups.length }}</span>
-        </button>
-      </div>
+      <TbOptionGroup v-model="activeTab" variant="tab" :options="tabOptions" />
 
       <!-- Tab panels (flex-1 + overflow so they scroll independently) -->
-      <div class="flex-1 overflow-y-auto min-h-0">
+      <div class="tb-scroll-panel">
         <ScimUserList
           v-if="activeTab === 'users'"
           :users="users"

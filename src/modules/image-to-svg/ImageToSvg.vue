@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import { TbButton, TbDropZone, TbProgressBar } from '@components'
 import { ref, watch } from 'vue'
 import ConversionParameters from './ConversionParameters.vue'
-import ConversionProgress from './ConversionProgress.vue'
-import ImageDropZone from './ImageDropZone.vue'
 import { convertToSvg, getDefaultParams, loadImageFromFile } from './logic'
 import ResultPreview from './ResultPreview.vue'
 import type { ConversionParams, ConversionResult } from './types'
@@ -103,25 +102,19 @@ watch(() => ({ ...params.value }), () => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <p class="text-sm text-text-secondary">Convert raster images (PNG, JPG) to SVG vector graphics using VTracer.</p>
+  <div class="tb-stack-6">
+    <p class="tb-text-description">Convert raster images (PNG, JPG) to SVG vector graphics using VTracer.</p>
 
-    <ImageDropZone @file="handleFile" />
+    <TbDropZone accept="image/*" label="Drop an image here or click to browse" subtitle="Supports PNG, JPG, GIF, WebP, and BMP" @file="handleFile" />
 
-    <p v-if="errorMessage" class="text-sm text-error">{{ errorMessage }}</p>
+    <p v-if="errorMessage" role="alert" class="tb-text-sm tb-text-error">{{ errorMessage }}</p>
 
     <ConversionParameters v-if="image" v-model="params" :disabled="converting" />
 
-    <ConversionProgress v-if="converting" :progress="progress" />
+    <TbProgressBar v-if="converting" :progress="progress" label="Converting..." />
 
-    <div v-if="image" class="flex items-center gap-2">
-      <button
-        type="button"
-        class="px-3 py-1.5 text-xs font-medium text-text-secondary border border-border rounded-lg hover:text-text-primary hover:border-border-focus transition-colors cursor-pointer"
-        @click="clearImage"
-      >
-        Clear
-      </button>
+    <div v-if="image" class="tb-row tb-row--gap-2">
+      <TbButton variant="secondary" size="sm" @click="clearImage">Clear</TbButton>
     </div>
 
     <ResultPreview

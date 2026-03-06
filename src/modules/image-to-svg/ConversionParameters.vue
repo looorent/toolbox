@@ -1,9 +1,8 @@
 <script setup lang="ts">
+import { TbButton, TbOptionGroup, type TbOptionGroupOption, TbSlider } from '@components'
 import { computed, ref } from 'vue'
-import ParameterSlider from './ParameterSlider.vue'
 import { findActivePreset, presets } from './presets'
-import SegmentedControl from './SegmentedControl.vue'
-import type { ClusteringMode, ConversionParams, HierarchicalMode, TraceMode } from './types'
+import type { ConversionParams } from './types'
 
 const props = defineProps<{
   disabled?: boolean
@@ -11,29 +10,32 @@ const props = defineProps<{
 
 const params = defineModel<ConversionParams>({ required: true })
 
-const activePresetKey = computed(() => findActivePreset(params.value))
+const activePresetKey = computed({
+  get: (): string => findActivePreset(params.value) ?? '',
+  set: (key: string) => {
+    const preset = presets.find(preset => preset.key === key)
+
+    if (preset) {
+      params.value = { ...preset.params }
+    }
+  },
+})
 const showAdvanced = ref(false)
 
-function applyPreset(key: string) {
-  const preset = presets.find(preset => preset.key === key)
+const presetOptions: TbOptionGroupOption[] = presets.map(preset => ({ value: preset.key, label: preset.label, title: preset.description }))
 
-  if (preset) {
-    params.value = { ...preset.params }
-  }
-}
-
-const traceModes: { value: TraceMode; label: string; description: string }[] = [
+const traceModes: TbOptionGroupOption[] = [
   { value: 'spline', label: 'Spline', description: 'Smooth curves (best for most images)' },
   { value: 'polygon', label: 'Polygon', description: 'Straight segments (pixel-art style)' },
   { value: 'none', label: 'None', description: 'No path simplification (raw pixel edges)' },
 ]
 
-const clusteringModes: { value: ClusteringMode; label: string; description: string }[] = [
+const clusteringModes: TbOptionGroupOption[] = [
   { value: 'color', label: 'Color', description: 'Full color tracing with clustering' },
   { value: 'binary', label: 'B/W', description: 'Black and white tracing' },
 ]
 
-const hierarchicalModes: { value: HierarchicalMode; label: string; description: string }[] = [
+const hierarchicalModes: TbOptionGroupOption[] = [
   { value: 'stacked', label: 'Stacked', description: 'Layers stacked on top of each other' },
   { value: 'cutout', label: 'Cutout', description: 'Shapes cut out from layers below' },
 ]
@@ -107,52 +109,34 @@ const sliders = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-4" :class="{ 'opacity-50 pointer-events-none': props.disabled }">
-    <!-- Presets -->
-    <div class="flex flex-wrap items-center gap-2">
-      <span class="text-xs font-semibold uppercase tracking-wider text-text-muted">Preset</span>
-      <button
-        v-for="preset in presets"
-        :key="preset.key"
-        type="button"
-        :disabled="props.disabled"
-        class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors cursor-pointer"
-        :class="activePresetKey === preset.key
-          ? 'bg-accent text-white'
-          : 'bg-surface-overlay text-text-secondary hover:text-text-primary border border-border'"
-        :title="preset.description"
-        @click="applyPreset(preset.key)"
-      >
-        {{ preset.label }}
-      </button>
-    </div>
+  <div class="tb-stack-4" :class="{ 'tb-disabled': props.disabled }">
+    <TbOptionGroup v-model="activePresetKey" label="Preset" size="sm" :options="presetOptions" :disabled="props.disabled" />
 
-    <!-- Advanced toggle -->
-    <button
-      type="button"
-      class="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary transition-colors cursor-pointer"
+    <TbButton
+      variant="ghost"
       :disabled="props.disabled"
       @click="showAdvanced = !showAdvanced"
     >
-      <span class="transition-transform" :class="showAdvanced ? 'rotate-90' : ''">&#9654;</span>
+      <span class="tb-inline-block tb-chevron" :class="{ 'tb-chevron--open': showAdvanced }">&#9654;</span>
       Advanced parameters
-    </button>
+    </TbButton>
 
-    <div v-if="showAdvanced" class="space-y-4">
-      <SegmentedControl v-model="params.clusteringMode" label="Clustering" :options="clusteringModes" :disabled="props.disabled" />
+    <div v-if="showAdvanced" class="tb-stack-4">
+      <TbOptionGroup v-model="params.clusteringMode" variant="segmented" label="Clustering" :options="clusteringModes" :disabled="props.disabled" />
 
-      <SegmentedControl
+      <TbOptionGroup
         v-if="params.clusteringMode === 'color'"
         v-model="params.hierarchical"
+        variant="segmented"
         label="Hierarchy"
         :options="hierarchicalModes"
         :disabled="props.disabled"
       />
 
-      <SegmentedControl v-model="params.mode" label="Curve fitting" :options="traceModes" :disabled="props.disabled" />
+      <TbOptionGroup v-model="params.mode" variant="segmented" label="Curve fitting" :options="traceModes" :disabled="props.disabled" />
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <ParameterSlider
+      <div class="tb-grid-2 tb-gap-8">
+        <TbSlider
           v-for="slider in sliders"
           :key="slider.key"
           v-model="params[slider.key]"

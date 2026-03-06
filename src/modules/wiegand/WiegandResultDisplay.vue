@@ -1,41 +1,58 @@
 <script setup lang="ts">
-import CopyStatCard from '@components/CopyStatCard.vue'
+import { TbCard, TbKvTable } from '@components'
+import { computed } from 'vue'
 import type { WiegandResult } from './types'
 
-defineProps<{ result: WiegandResult }>()
+const props = defineProps<{ result: WiegandResult }>()
+
+const encode26Entries = computed(() => {
+  if (props.result.mode !== 'encode' || !props.result.encoded26) {
+    return []
+  }
+  const encoded = props.result.encoded26
+  return [
+    { key: 'Hex', value: encoded.wiegand26InHexadecimal },
+    { key: 'Decimal', value: `${encoded.wiegand26InDecimal}` },
+    { key: 'Facility Code', value: `${encoded.facilityCode}` },
+    { key: 'ID Number', value: `${encoded.idNumber}` },
+    { key: 'FC + ID Combined', value: `${encoded.facilityCodeAndIdNumber}` },
+  ]
+})
+
+const decode26Entries = computed(() => {
+  if (props.result.mode !== 'decode26' || !props.result.decoded) {
+    return []
+  }
+  const decoded = props.result.decoded
+  return [
+    { key: 'Facility Code', value: decoded.facilityCode.toString() },
+    { key: 'ID Number', value: decoded.idNumber.toString() },
+    { key: 'Decimal', value: decoded.wiegand26InDecimal.toString() },
+    { key: 'FC + ID Combined', value: decoded.facilityCodeAndIdNumber.toString() },
+  ]
+})
 </script>
 
 <template>
-  <div v-if="result.mode === 'error'" class="bg-error/10 border border-error/30 rounded-lg px-4 py-3 text-sm text-error">
+  <div v-if="result.mode === 'error'" role="alert" class="tb-alert tb-alert--error">
     {{ result.error }}
   </div>
 
-  <template v-else-if="result.mode === 'encode'">
-    <div v-if="result.encoded26" class="space-y-4">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-text-muted">Wiegand 26-bit</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <CopyStatCard title="Hex" :value="result.encoded26.wiegand26InHexadecimal" value-class="text-lg font-mono font-bold text-accent" />
-        <CopyStatCard title="Decimal" :value="`${result.encoded26.wiegand26InDecimal}`" value-class="text-lg font-mono font-medium text-text-primary" />
-        <CopyStatCard title="Facility Code" :value="`${result.encoded26.facilityCode}`" value-class="text-lg font-mono font-medium text-text-primary" />
-        <CopyStatCard title="ID Number" :value="`${result.encoded26.idNumber}`" value-class="text-lg font-mono font-medium text-text-primary" />
-      </div>
-      <CopyStatCard title="FC + ID Combined" :value="`${result.encoded26.facilityCodeAndIdNumber}`" value-class="text-lg font-mono font-medium text-text-primary" />
-    </div>
+  <div v-else-if="result.mode === 'encode'" class="tb-stack-4">
+    <TbCard v-if="result.encoded26" title="Wiegand 26-bit">
+      <TbKvTable :entries="encode26Entries" copyable />
+    </TbCard>
 
-    <div v-if="result.encoded64" class="space-y-2">
-      <h3 class="text-xs font-semibold uppercase tracking-wider text-text-muted">Wiegand 64-bit</h3>
-      <CopyStatCard title="Hex" :value="result.encoded64" value-class="text-lg font-mono font-bold text-accent break-all" />
-    </div>
-  </template>
-
-  <div v-else-if="result.mode === 'decode26' && result.decoded" class="grid grid-cols-2 gap-4">
-    <CopyStatCard title="Facility Code" :value="result.decoded.facilityCode.toString()" value-class="text-lg font-mono font-medium text-text-primary" />
-    <CopyStatCard title="ID Number" :value="result.decoded.idNumber.toString()" value-class="text-lg font-mono font-medium text-text-primary" />
-    <CopyStatCard title="Decimal" :value="result.decoded.wiegand26InDecimal.toString()" value-class="text-lg font-mono font-medium text-text-primary" />
-    <CopyStatCard title="FC + ID Combined" :value="result.decoded.facilityCodeAndIdNumber.toString()" value-class="text-lg font-mono font-medium text-text-primary" />
+    <TbCard v-if="result.encoded64" title="Wiegand 64-bit">
+      <TbKvTable :entries="[{ key: 'Hex', value: result.encoded64 }]" copyable />
+    </TbCard>
   </div>
 
-  <template v-else-if="result.mode === 'decode64' && result.decoded">
-    <CopyStatCard title="License Plate" :value="result.decoded" value-class="text-2xl font-mono font-bold text-accent" />
-  </template>
+  <TbCard v-else-if="result.mode === 'decode26' && result.decoded" title="Wiegand 26-bit">
+    <TbKvTable :entries="decode26Entries" copyable />
+  </TbCard>
+
+  <TbCard v-else-if="result.mode === 'decode64' && result.decoded" title="Wiegand 64-bit">
+    <TbKvTable :entries="[{ key: 'License Plate', value: result.decoded }]" copyable />
+  </TbCard>
 </template>

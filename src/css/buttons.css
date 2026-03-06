@@ -1,0 +1,195 @@
+/* --- Buttons (base + variants) --- */
+/* See also: Pill toggle, Mini toggle, Icon button, Button small variant */
+
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-8);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast),
+    color var(--duration-fast),
+    opacity var(--duration-fast);
+}
+
+.tb-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.tb-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.tb-btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+.tb-btn-primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.tb-btn-secondary {
+  background-color: var(--color-surface-overlay);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.tb-btn-secondary:hover {
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.tb-btn-ghost {
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-6);
+  background: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.tb-btn-ghost:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-overlay);
+}
+
+.tb-btn-danger {
+  background-color: var(--color-error);
+  color: var(--color-text-on-accent);
+}
+
+.tb-btn-danger:hover {
+  opacity: 0.9;
+}
+
+/* --- Buttons: Pill toggle (standalone toggle buttons, not segmented) --- */
+
+.tb-btn-pill {
+  padding: var(--spacing-4) var(--spacing-8);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast),
+    color var(--duration-fast);
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-overlay);
+  color: var(--color-text-secondary);
+}
+
+.tb-btn-pill:hover {
+  color: var(--color-text-primary);
+}
+
+.tb-btn-pill--active {
+  background-color: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent);
+}
+
+.tb-btn-pill--sm {
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--text-xs);
+}
+
+.tb-btn-pill--square {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+
+/* --- Buttons: Secondary active toggle state --- */
+
+.tb-btn-secondary--active {
+  background-color: var(--color-accent-10);
+  border-color: var(--color-accent-30);
+  color: var(--color-accent);
+}
+
+/* --- Buttons: Mini toggle (for claims table/json toggle) --- */
+
+.tb-btn-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--spacing-12);
+  padding: var(--spacing-1) var(--spacing-4);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast);
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+.tb-btn-mini:hover {
+  color: var(--color-text-secondary);
+}
+
+.tb-btn-mini--active {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+/* --- Buttons: Icon button (e.g. edit/delete row actions) --- */
+
+.tb-btn-icon {
+  padding: var(--spacing-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast),
+    background-color var(--duration-fast);
+  background: none;
+  border: none;
+}
+
+.tb-btn-icon:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-overlay);
+}
+
+.tb-btn-icon--danger:hover {
+  color: var(--color-error);
+  background-color: var(--color-error-10);
+}
+
+/* --- Buttons & interactive: Disabled & active states --- */
+
+.tb-btn-pill:disabled,
+.tb-btn-mini:disabled,
+.tb-btn-icon:disabled,
+.tb-chip:disabled,
+.tb-tab-bar__tab:disabled,
+.tb-toggle-group__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.tb-btn-pill:active:not(:disabled),
+.tb-btn-mini:active:not(:disabled),
+.tb-btn-icon:active:not(:disabled),
+.tb-chip:active:not(:disabled),
+.tb-toggle-group__btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* --- Buttons: Small variant --- */
+
+.tb-btn--sm {
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--text-xs);
+}

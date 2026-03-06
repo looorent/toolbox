@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-03-06
+
+* [Technical] Removed TailwindCSS dependencies and utility classes across all components.
+* [Technical] Implemented a custom CSS architecture for layouts and UI elements.
+* [Technical] Integrated a Storybook design system for isolated component development and documentation.
+
 ## [1.0.3] - 2026-03-03
 
 * [Feature] Image to SVG — convert raster images to SVG vector graphics using VTracer WASM, with preset configurations (Default, Smallest file, High fidelity, Pixel art, Posterized) and collapsible advanced parameter panel

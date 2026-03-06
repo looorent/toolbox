@@ -1,4 +1,4 @@
-import type { CapturedHeader, CapturedRequest, WebhookMetadata } from '@shared/modules/webhook/types'
+import type { CapturedHeader, CapturedRequest, HttpMethod, WebhookMetadata } from '@shared/modules/webhook/types'
 import { incrementNumberOfCallsFor } from './repository'
 
 export const RATE_LIMIT_WINDOW_SECONDS = 86_401 // ~24 h, intentionally slightly over a day boundary
@@ -35,7 +35,7 @@ export function buildWebhook(env: Env): WebhookMetadata {
 export async function buildWebhookRequest(request: Request, url: URL): Promise<CapturedRequest> {
   return {
     id: crypto.randomUUID(),
-    method: request.method,
+    method: request.method as HttpMethod,
     path: url.pathname,
     queryParams: Object.fromEntries(url.searchParams.entries()),
     headers: Array.from(request.headers.entries(), ([name, value]) => ({ name, value })),

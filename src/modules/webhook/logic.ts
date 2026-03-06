@@ -1,4 +1,4 @@
-import type { CapturedRequest, RequestsPage, WebhookMetadata } from '@shared/modules/webhook/types'
+import type { CapturedRequest, HttpMethod, RequestsPage, WebhookMetadata } from '@shared/modules/webhook/types'
 
 export async function createWebhook(): Promise<WebhookMetadata> {
   const response = await fetch('/api/webhooks', { method: 'POST' })
@@ -71,18 +71,18 @@ export function generateRawRequest(request: CapturedRequest): string {
   return `${requestLine}${headerSection}${bodySection}`
 }
 
-export const METHOD_COLORS: Record<string, string> = {
-  GET: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-  POST: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-  PUT: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-  PATCH: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
-  DELETE: 'text-red-400 bg-red-400/10 border-red-400/20',
-  HEAD: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
-  OPTIONS: 'text-text-muted bg-surface-raised border-border',
+export const METHOD_COLORS: Record<HttpMethod, string> = {
+  GET: 'tb-http-method-badge--get',
+  POST: 'tb-http-method-badge--post',
+  PUT: 'tb-http-method-badge--put',
+  PATCH: 'tb-http-method-badge--patch',
+  DELETE: 'tb-http-method-badge--delete',
+  HEAD: 'tb-http-method-badge--head',
+  OPTIONS: 'tb-http-method-badge--options',
 }
 
-export function methodColor(method: string): string {
-  return METHOD_COLORS[method] ?? 'text-text-muted bg-surface-raised border-border'
+export function methodColor(method: HttpMethod): string {
+  return METHOD_COLORS[method]
 }
 
 export function generateCurlCommand(request: CapturedRequest, origin: string): string {

@@ -15,7 +15,7 @@ generate()
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="tb-stack-6">
     <UuidToolbar v-model:count="count" :uuids="uuids" @generate="generate" />
     <UuidList :uuids="uuids" />
   </div>

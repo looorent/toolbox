@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyButton from '@components/CopyButton.vue'
+import { TbCheckbox, TbCopyButton } from '@components'
 
 defineProps<{
   validPath: boolean
@@ -12,17 +12,17 @@ const showGrid = defineModel<boolean>('showGrid', { required: true })
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-4">
-    <label class="flex items-center gap-2 text-xs text-text-secondary">
-      <span class="font-semibold uppercase tracking-wider text-text-muted">Stroke</span>
-      <input v-model="stroke" type="color" class="w-6 h-6 rounded cursor-pointer bg-transparent border-0" />
+  <div class="tb-row tb-row--gap-4 tb-row--wrap">
+    <label class="tb-row tb-text-xs tb-text-secondary">
+      <span class="tb-label tb-label--inline">Stroke</span>
+      <input v-model="stroke" type="color" class="tb-color-input" />
     </label>
 
-    <label class="flex items-center gap-2 text-xs text-text-secondary">
-      <span class="font-semibold uppercase tracking-wider text-text-muted">Fill</span>
+    <label class="tb-row tb-text-xs tb-text-secondary">
+      <span class="tb-label tb-label--inline">Fill</span>
       <select
         v-model="fill"
-        class="bg-surface-overlay border border-border rounded px-2 py-1 text-xs font-mono text-text-primary focus:outline-none focus:border-border-focus"
+        class="tb-input tb-input--small tb-font-mono tb-w-auto"
       >
         <option value="none">none</option>
         <option :value="stroke">stroke color</option>
@@ -30,11 +30,8 @@ const showGrid = defineModel<boolean>('showGrid', { required: true })
       </select>
     </label>
 
-    <label class="flex items-center gap-2 text-xs cursor-pointer">
-      <input v-model="showGrid" type="checkbox" class="accent-accent" />
-      <span class="text-text-secondary">Grid</span>
-    </label>
+    <TbCheckbox v-model="showGrid" label="Grid" />
 
-    <CopyButton v-if="validPath" :value="svgString" label="Copy SVG" class="ml-auto" />
+    <TbCopyButton v-if="validPath" :value="svgString" label="Copy SVG" class="tb-ml-auto" />
   </div>
 </template>

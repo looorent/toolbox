@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { TbCard, TbCodeEditor, TbKvTable } from '@components'
 import { computed, ref } from 'vue'
-import CopyRow from '@/components/CopyRow.vue'
 import { rawClaimValue } from './logic'
 
 type SectionView = 'table' | 'json'
@@ -20,45 +20,52 @@ function setView(view: SectionView) {
 }
 
 const json = computed(() => JSON.stringify(props.data, null, 2))
+
+const claimEntries = computed(() =>
+  Object.entries(props.data).map(([key, value]) => ({
+    key,
+    value: rawClaimValue(value),
+    label: props.labels[key] ?? key,
+    displayValue: props.formatValue(key, value),
+  }))
+)
 </script>
 
 <template>
-  <div class="bg-surface-overlay border border-border rounded-lg overflow-hidden">
-    <div class="flex items-center justify-between px-4 py-2 border-b border-border">
-      <h3 class="text-xs font-semibold uppercase tracking-wider" :class="color">{{ title }}</h3>
-      <div class="flex gap-1">
+  <TbCard sectioned :title="title" :title-class="color">
+    <template #actions>
+      <div class="tb-row tb-row--gap-1">
         <button
           v-for="view in (['table', 'json'] as const)"
           :key="view"
           type="button"
-          class="px-2 py-0.5 text-xs rounded transition-colors"
-          :class="currentView === view ? 'bg-surface-base text-text-primary' : 'text-text-muted hover:text-text-secondary'"
+          class="tb-btn-mini"
+          :class="{ 'tb-btn-mini--active': currentView === view }"
           @click="setView(view)"
         >
           {{ view === 'table' ? 'Claims' : 'JSON' }}
         </button>
       </div>
-    </div>
-    <div class="px-4 py-3">
-      <CopyRow v-if="currentView === 'json'" :value="json">
-        <pre class="text-sm font-mono text-text-primary overflow-x-auto">{{ json }}</pre>
-      </CopyRow>
-      <div v-else>
-        <CopyRow
-          v-for="(value, key) in data"
-          :key="key"
-          :value="rawClaimValue(value)"
-          class="flex items-start gap-4 py-1.5 border-b border-border/50 last:border-0 text-sm"
-        >
-          <span class="text-text-muted whitespace-nowrap">
-            {{ labels[key as string] ?? key }}
-            <span v-if="labels[key as string]" class="text-xs text-text-muted/60 ml-1">({{ key }})</span>
-          </span>
-          <span class="font-mono text-text-primary">
-            {{ formatValue(key as string, value) }}
-          </span>
-        </CopyRow>
-      </div>
-    </div>
-  </div>
+    </template>
+
+    <TbCodeEditor
+      v-if="currentView === 'json'"
+      v-model="json"
+      status="idle"
+      readonly
+      copyable
+    />
+
+    <TbKvTable v-else :entries="claimEntries" copyable key-size="md">
+      <template #key="{ entry }">
+        <span class="tb-nowrap">
+          {{ entry.label }}
+          <span v-if="labels[entry.key]" class="tb-hint tb-ml-2">({{ entry.key }})</span>
+        </span>
+      </template>
+      <template #value="{ entry }">
+        {{ entry.displayValue }}
+      </template>
+    </TbKvTable>
+  </TbCard>
 </template>

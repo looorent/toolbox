@@ -23,8 +23,7 @@
   },
   "css": {
     "parser": {
-      "cssModules": false,
-      "tailwindDirectives": true
+      "cssModules": false
     }
   },
   "assist": {
@@ -63,6 +62,36 @@
       "includes": ["**/*router.ts"],
       "formatter": {
         "lineWidth": 320
+      }
+    },
+    {
+      "includes": ["**/layout.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            // dvh progressive enhancement: 100vh fallback for older browsers,
+            // 100dvh override for modern browsers with dynamic viewport support.
+            "noDuplicateProperties": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/utilities.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            // !important is required in @media (prefers-reduced-motion: reduce)
+            // to guarantee all transitions/animations are suppressed regardless
+            // of specificity — standard accessibility pattern.
+            "noImportantStyles": "off"
+          },
+          "style": {
+            // Group hover pattern: higher-specificity compound selector comes first
+            // to define the active state, then the base class resets — intentional order.
+            "noDescendingSpecificity": "off"
+          }
+        }
       }
     }
   ]

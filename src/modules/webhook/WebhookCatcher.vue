@@ -173,7 +173,7 @@ watch(webhookId, () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full gap-6">
+  <div class="tb-module-root">
     <WebhookLanding
       v-if="!webhookId"
       :is-creating="isCreating"
@@ -181,7 +181,7 @@ watch(webhookId, () => {
       @create="handleCreateWebhook"
     />
 
-    <div v-else class="flex flex-col flex-1 gap-4 min-h-0">
+    <div v-else class="tb-module-body">
       <WebhookToolbar
         :webhook-url="webhookUrl"
         :is-creating="isCreating"
@@ -197,9 +197,9 @@ watch(webhookId, () => {
         :webhook-url="webhookUrl"
       />
 
-      <p v-if="loadError" class="text-sm text-error">{{ loadError }}</p>
+      <p v-if="loadError" role="alert" class="tb-text-sm tb-text-error">{{ loadError }}</p>
 
-      <div class="flex flex-1 gap-4 min-h-0">
+      <div class="tb-split-view">
         <WebhookRequestList
           :webhook="webhook"
           :requests="requests"

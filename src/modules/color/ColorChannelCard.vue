@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TbCard } from '@components'
 import { useCopy } from '@composables/useCopy'
 
 interface Channel {
@@ -12,37 +13,33 @@ const props = defineProps<{
   copyValue: string
   channels: Channel[]
   values: Record<string, number>
-  barClass: string | ((key: string) => string)
+  barColor: string | ((key: string) => string)
 }>()
 
 const { copy, copiedKey } = useCopy()
 
-function barColorClass(key: string): string {
-  return typeof props.barClass === 'function' ? props.barClass(key) : props.barClass
+function resolveBarColor(key: string): string {
+  return typeof props.barColor === 'function' ? props.barColor(key) : props.barColor
 }
 </script>
 
 <template>
-  <div
-    class="bg-surface-overlay border border-border rounded-lg p-4 space-y-3 cursor-pointer active:opacity-80"
-    @click="copy(title, copyValue)"
-  >
-    <h3 class="text-xs font-semibold uppercase tracking-wider text-text-muted">
+  <TbCard clickable class="tb-stack-3" @click="copy(title, copyValue)">
+    <h3 class="tb-label tb-label--inline">
       {{ title }}
-      <span v-if="copiedKey === title" class="text-success normal-case tracking-normal ml-1">Copied!</span>
+      <span v-if="copiedKey === title" role="status" class="tb-stat-card__copied tb-text-success">Copied!</span>
     </h3>
-    <div v-for="channel in channels" :key="channel.key" class="space-y-1">
-      <div class="flex justify-between text-xs">
-        <span class="text-text-muted uppercase">{{ channel.label }}</span>
-        <span class="font-mono text-text-primary">{{ Math.round(values[channel.key] ?? 0) }}{{ channel.max === 360 ? '°' : channel.max === 100 ? '%' : '' }}</span>
+    <div v-for="channel in channels" :key="channel.key" class="tb-stack-1">
+      <div class="tb-row tb-row--between tb-text-xs">
+        <span class="tb-text-muted tb-uppercase">{{ channel.label }}</span>
+        <span class="tb-font-mono tb-text-primary">{{ Math.round(values[channel.key] ?? 0) }}{{ channel.max === 360 ? '°' : channel.max === 100 ? '%' : '' }}</span>
       </div>
-      <div class="h-1.5 bg-surface-base rounded-full overflow-hidden">
+      <div class="tb-progress-bar">
         <div
-          class="h-full rounded-full transition-all"
-          :class="barColorClass(channel.key)"
-          :style="{ width: `${((values[channel.key] ?? 0) / channel.max) * 100}%` }"
+          class="tb-progress-bar__fill"
+          :style="{ width: `${((values[channel.key] ?? 0) / channel.max) * 100}%`, backgroundColor: resolveBarColor(channel.key) }"
         />
       </div>
     </div>
-  </div>
+  </TbCard>
 </template>

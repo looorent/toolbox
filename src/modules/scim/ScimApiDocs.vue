@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyButton from '@components/CopyButton.vue'
+import { TbButton, TbCodeBlock, TbCopyButton, TbExpandable, TbHttpMethodBadge } from '@components'
 import { useCopy } from '@composables/useCopy'
 import { ref } from 'vue'
 
@@ -25,18 +25,6 @@ interface Endpoint {
   description: string
   curlExample: string
   requestBody?: string
-}
-
-const METHOD_COLORS: Record<HttpMethod, string> = {
-  GET: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-  POST: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
-  PUT: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
-  PATCH: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
-  DELETE: 'text-red-400 bg-red-400/10 border-red-400/20',
-}
-
-function methodColor(method: HttpMethod): string {
-  return METHOD_COLORS[method]
 }
 
 function buildEndpoints(): { title: string; endpoints: Endpoint[] }[] {
@@ -217,92 +205,56 @@ function endpointKey(section: string, method: string, path: string): string {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <div class="flex flex-col gap-2">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-semibold text-text-primary">API Reference</h2>
-        <button
-          type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-surface-raised border border-border transition-colors cursor-pointer"
-          :class="copiedKey === 'openapi' ? 'text-success border-success/20' : 'text-text-secondary hover:border-border-focus hover:text-text-primary'"
+  <div class="tb-stack-6">
+    <div class="tb-stack-2">
+      <div class="tb-row tb-row--between">
+        <h2 class="tb-section-title">API Reference</h2>
+        <TbButton
+          variant="secondary"
+          size="sm"
           title="Copy OpenAPI 3.0 spec URL (importable in Postman, Insomnia, etc.)"
+          :class="copiedKey === 'openapi' ? 'tb-text-success' : ''"
           @click="copyOpenApiUrl"
         >
-          <svg class="w-3.5 h-3.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
           {{ copiedKey === 'openapi' ? 'Copied!' : 'OpenAPI' }}
-        </button>
+        </TbButton>
       </div>
-      <div class="flex items-center gap-2 px-3 py-2 bg-surface-raised rounded-lg border border-border">
-        <span class="text-xs text-text-muted shrink-0">Base URL</span>
-        <code class="flex-1 text-xs font-mono text-text-secondary truncate">{{ scimBaseUrl }}</code>
-        <CopyButton :value="scimBaseUrl" class="shrink-0" />
+      <div class="tb-info-bar">
+        <span class="tb-hint tb-flex-shrink-0">Base URL</span>
+        <code class="tb-code-inline tb-text-secondary tb-truncate tb-flex-fill">{{ scimBaseUrl }}</code>
+        <TbCopyButton :value="scimBaseUrl" class="tb-flex-shrink-0" />
       </div>
-      <p class="text-xs text-text-muted">
-        This server implements the <strong class="text-text-secondary">SCIM 2.0</strong> standard (<a href="https://tools.ietf.org/html/rfc7644" target="_blank" rel="noopener" class="text-accent hover:underline">RFC 7644</a>).
-        All endpoints accept and return <code class="text-text-secondary">application/scim+json</code>.
+      <p class="tb-hint">
+        This server implements the <strong class="tb-text-secondary">SCIM 2.0</strong> standard (<a href="https://tools.ietf.org/html/rfc7644" target="_blank" rel="noopener" class="tb-text-accent tb-link">RFC 7644</a>).
+        All endpoints accept and return <code class="tb-text-secondary">application/scim+json</code>.
       </p>
     </div>
 
-    <div v-for="section in buildEndpoints()" :key="section.title" class="flex flex-col gap-2">
-      <h3 class="text-xs font-semibold text-text-muted uppercase tracking-wider">{{ section.title }}</h3>
+    <div v-for="section in buildEndpoints()" :key="section.title" class="tb-stack-2">
+      <h3 class="tb-label tb-label--inline">{{ section.title }}</h3>
 
-      <div
+      <TbExpandable
         v-for="endpoint in section.endpoints"
         :key="endpointKey(section.title, endpoint.method, endpoint.path)"
-        class="rounded-lg border border-border overflow-hidden"
+        :model-value="expandedEndpoint === endpointKey(section.title, endpoint.method, endpoint.path)"
+        @update:model-value="toggleEndpoint(endpointKey(section.title, endpoint.method, endpoint.path))"
       >
-        <!-- Header row (clickable) -->
-        <button
-          type="button"
-          class="w-full flex items-center gap-3 px-4 py-3 bg-surface-raised hover:bg-surface-overlay transition-colors text-left cursor-pointer"
-          @click="toggleEndpoint(endpointKey(section.title, endpoint.method, endpoint.path))"
-        >
-          <span
-            class="shrink-0 px-2 py-0.5 text-xs font-mono font-semibold rounded border uppercase"
-            :class="methodColor(endpoint.method)"
-          >{{ endpoint.method }}</span>
-          <code class="flex-1 text-xs font-mono text-text-primary truncate">{{ endpoint.path }}</code>
-          <span class="shrink-0 text-xs text-text-muted hidden sm:block">{{ endpoint.summary }}</span>
-          <svg
-            class="w-4 h-4 text-text-muted shrink-0 transition-transform"
-            :class="expandedEndpoint === endpointKey(section.title, endpoint.method, endpoint.path) ? 'rotate-180' : ''"
-            aria-hidden="true"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+        <template #header>
+          <TbHttpMethodBadge :method="endpoint.method" size="sm" />
+          <code class="tb-code-inline tb-text-primary tb-truncate tb-flex-fill">{{ endpoint.path }}</code>
+          <span class="tb-hint tb-sm-show">{{ endpoint.summary }}</span>
+        </template>
 
-        <!-- Expanded content -->
-        <div
-          v-if="expandedEndpoint === endpointKey(section.title, endpoint.method, endpoint.path)"
-          class="border-t border-border"
-        >
-          <div class="p-4 flex flex-col gap-4">
-            <p class="text-xs text-text-secondary">{{ endpoint.description }}</p>
+        <div class="tb-stack-4">
+          <p class="tb-text-xs tb-text-secondary">{{ endpoint.description }}</p>
 
-            <div v-if="endpoint.requestBody">
-              <p class="text-xs font-semibold text-text-muted mb-2">Request Body</p>
-              <div class="relative">
-                <pre class="text-xs font-mono text-text-secondary bg-surface rounded-lg p-3 border border-border overflow-x-auto">{{ endpoint.requestBody }}</pre>
-                <CopyButton :value="endpoint.requestBody" class="absolute top-2 right-2" />
-              </div>
-            </div>
-
-            <div>
-              <p class="text-xs font-semibold text-text-muted mb-2">cURL Example</p>
-              <div class="relative">
-                <pre class="text-xs font-mono text-text-secondary bg-surface rounded-lg p-3 border border-border overflow-x-auto">{{ endpoint.curlExample }}</pre>
-                <CopyButton :value="endpoint.curlExample" class="absolute top-2 right-2" />
-              </div>
-            </div>
-          </div>
+          <TbCodeBlock v-if="endpoint.requestBody" title="Request Body" :value="endpoint.requestBody" copyable />
+          <TbCodeBlock title="cURL Example" :value="endpoint.curlExample" copyable />
         </div>
-      </div>
+      </TbExpandable>
     </div>
   </div>
 </template>

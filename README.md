@@ -1,6 +1,6 @@
 # Toolbox
 
-A collection of lightweight, browser-native developer utilities. This toolbox is designed to be fast, private (all processing happens locally), and dependency-minimal.
+A collection of lightweight, browser-native developer utilities. Fast, private (all processing happens locally), and dependency-minimal.
 
 ## Features
 
@@ -9,8 +9,8 @@ A collection of lightweight, browser-native developer utilities. This toolbox is
 - **Cheat Sheets**: Quick reference for Bash, CSS, Git, HTTP, and Regex.
 - **Color Converter**: Convert between Hex, RGB, HSL, and more.
 - **Epoch Converter**: Convert Unix timestamps to human-readable dates.
-- **Image to SVG**: Convert raster images (PNG, JPG, WebP) to SVG vector graphics using VTracer WASM, with presets and advanced parameter tuning.
 - **HTML Entity**: Encode and decode HTML entities.
+- **Image to SVG**: Convert raster images to SVG vector graphics using VTracer WASM.
 - **JSON Validator**: Format, repair, and validate JSON payloads.
 - **JWT Decoder**: Inspect JSON Web Tokens (header and payload).
 - **Number Converter**: Convert between Decimal, Hex, Binary, and Octal.
@@ -19,21 +19,20 @@ A collection of lightweight, browser-native developer utilities. This toolbox is
 - **SVG Path**: Visualize SVG path data.
 - **URL Encoder**: Percent-encode/decode strings.
 - **UUID Generator**: Generate v4 UUIDs.
-- **Webhook Catcher**: Capture and inspect incoming HTTP webhooks with a unique URL.
 - **Wiegand Converter**: Tools for working with Wiegand protocols.
 - **XOR Checksum**: Calculate XOR-based checksums.
 
-## Server-backed features
+### Server-backed features
 
 These features require Cloudflare Workers with additional bindings.
 
 - **Webhook Catcher**: Capture and inspect incoming HTTP webhooks with a unique URL, and send requests to external endpoints. Requires Cloudflare KV.
-- **SCIM Server**: Create isolated SCIM 2.0 endpoints to provision users and groups. Each server gets a unique URL for identity provider integration (Okta, Entra ID). A built-in Compliance tab documents RFC 7644 / RFC 7643 coverage. Requires Cloudflare D1.
+- **SCIM Server**: Create isolated SCIM 2.0 endpoints to provision users and groups. Each server gets a unique URL for identity provider integration (Okta, Entra ID). Requires Cloudflare D1.
 
 ## Tech Stack
 
 - **Framework**: [Vue 3](https://vuejs.org/) (Composition API)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Styling**: Vanilla CSS design system with [Storybook](https://storybook.js.org/)
 - **Build Tool**: [Vite](https://vitejs.dev/)
 - **Database**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) with [Drizzle ORM](https://orm.drizzle.team/)
 - **Storage**: [Cloudflare KV](https://developers.cloudflare.com/kv/)
@@ -51,64 +50,42 @@ Ensure you have [pnpm](https://pnpm.io/installation) installed.
 ### Setup
 
 ```bash
-# Install dependencies
 pnpm install
 ```
 
 ### Development Server
 
 ```bash
-# Start dev server with hot-reload
-pnpm dev
+pnpm dev              # Vite dev server with HMR
+pnpm storybook        # Component dev with Storybook
 ```
 
 ### Build and Lint
 
 ```bash
-# Build for production
-pnpm build
-
-# Lint files
-pnpm lint
-
-# Fix linting issues
-pnpm lint:fix
-
-# Type-check
-pnpm type-check
+pnpm build            # Type-check + production build
+pnpm lint             # Biome check
+pnpm lint:fix         # Biome auto-fix
+pnpm type-check       # vue-tsc --build
 ```
 
 ### Deployment
 
-The project is deployed to Cloudflare Pages.
-
 ```bash
-# Preview deployment
-pnpm preview
-
-# Deploy to Cloudflare
-pnpm deploy
+pnpm preview          # Build + Wrangler local preview
+pnpm deploy           # Build + deploy to Cloudflare Workers
 ```
-
 
 ### Database (for server-backed features)
 
 ```bash
-# Generate migrations
-pnpm db:gen
-
-# Apply migrations locally
-pnpm db:migrate:local
-
-# Apply migrations to production
-pnpm db:migrate:prod
-
-# Browse local database
-pnpm db:studio:local
+pnpm db:gen            # Generate migrations
+pnpm db:migrate:local  # Apply migrations locally
+pnpm db:migrate:prod   # Apply migrations to production
+pnpm db:studio:local   # Browse local database
 ```
 
-### Next? TODO
+### TODO
 
 * [Feature] SCIM server: logs of every call to the SCIM API
-* [Technical] Create components and design system? (like "button")
 * [Technical] E2E Tests

@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import { TbInput, TbOptionGroup, type TbOptionGroupOption } from '@components'
 import { ref, watch } from 'vue'
 import { processWiegand } from './logic'
 import type { WiegandMode, WiegandResult } from './types'
-import WiegandModeToggle from './WiegandModeToggle.vue'
 import WiegandResultDisplay from './WiegandResultDisplay.vue'
 
 const mode = ref<WiegandMode>('encode')
 const input = ref<string>('')
 const result = ref<WiegandResult | null>(null)
+
+const modes: TbOptionGroupOption[] = [
+  { value: 'encode', label: 'Plate → Wiegand' },
+  { value: 'decode26', label: 'Decode W26' },
+  { value: 'decode64', label: 'Decode W64' },
+]
 
 const modeConfig: Record<WiegandMode, { label: string; placeholder: string }> = {
   encode: { label: 'License plate (max 10 chars)', placeholder: 'e.g. ABC 123' },
@@ -29,18 +35,15 @@ watch(mode, clear)
 </script>
 
 <template>
-  <div class="space-y-6">
-    <WiegandModeToggle v-model="mode" />
+  <div class="tb-stack-6">
+
+    <TbOptionGroup v-model="mode" :options="modes" />
 
     <div>
-      <label class="block text-sm text-text-secondary mb-2">
+      <label class="tb-label">
         {{ modeConfig[mode].label }}
       </label>
-      <input
-        v-model="input"
-        :placeholder="modeConfig[mode].placeholder"
-        class="w-full bg-surface-overlay border border-border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none focus:border-border-focus transition-colors"
-      />
+      <TbInput v-model="input" :placeholder="modeConfig[mode].placeholder" />
     </div>
 
     <WiegandResultDisplay v-if="result" :result="result" />

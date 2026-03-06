@@ -111,28 +111,24 @@ describe('generateRawRequest', () => {
 })
 
 describe('methodColor', () => {
-  it('returns emerald classes for GET', () => {
-    expect(methodColor('GET')).toContain('emerald')
+  it('returns the design system class for GET', () => {
+    expect(methodColor('GET')).toBe('tb-http-method-badge--get')
   })
 
-  it('returns blue classes for POST', () => {
-    expect(methodColor('POST')).toContain('blue')
+  it('returns the design system class for POST', () => {
+    expect(methodColor('POST')).toBe('tb-http-method-badge--post')
   })
 
-  it('returns yellow classes for PUT', () => {
-    expect(methodColor('PUT')).toContain('yellow')
+  it('returns the design system class for PUT', () => {
+    expect(methodColor('PUT')).toBe('tb-http-method-badge--put')
   })
 
-  it('returns orange classes for PATCH', () => {
-    expect(methodColor('PATCH')).toContain('orange')
+  it('returns the design system class for PATCH', () => {
+    expect(methodColor('PATCH')).toBe('tb-http-method-badge--patch')
   })
 
-  it('returns red classes for DELETE', () => {
-    expect(methodColor('DELETE')).toContain('red')
-  })
-
-  it('returns muted classes for unknown methods', () => {
-    expect(methodColor('UNKNOWN')).toContain('text-text-muted')
+  it('returns the design system class for DELETE', () => {
+    expect(methodColor('DELETE')).toBe('tb-http-method-badge--delete')
   })
 })
 

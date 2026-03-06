@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CopyButton from '@components/CopyButton.vue'
+import { TbButton, TbCopyButton } from '@components'
 import { formatDateTimeCompact } from '@utils/formatDateTimeCompact'
 import { formatFileSize } from '@utils/formatFileSize'
 import { computed } from 'vue'
@@ -30,41 +30,34 @@ function downloadSvg() {
 </script>
 
 <template>
-  <div class="space-y-4">
-    <div class="flex flex-wrap items-center gap-4 text-xs text-text-muted">
+  <div class="tb-stack-4">
+    <div class="tb-row tb-row--gap-4 tb-row--wrap tb-hint">
       <span>{{ result.width }} x {{ result.height }}</span>
       <span>Original: {{ formatFileSize(originalFileSize) }}</span>
       <span>SVG: {{ formatFileSize(result.svgSize) }}</span>
     </div>
 
-    <div class="flex items-center gap-2">
-      <button
-        type="button"
-        class="px-3 py-1.5 text-xs font-medium bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors cursor-pointer"
-        @click="downloadSvg"
-      >
-        Download SVG
-      </button>
-      <CopyButton :value="outputSvg" label="Copy SVG" />
+    <div class="tb-row tb-row--gap-2">
+      <TbButton size="sm" @click="downloadSvg">Download SVG</TbButton>
+      <TbCopyButton :value="outputSvg" label="Copy SVG" />
     </div>
 
     <!-- Side-by-side preview -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="tb-grid-2 tb-gap-8">
       <div>
-        <label class="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2 block">Original</label>
-        <div class="bg-surface-overlay border border-border rounded-lg p-4 flex items-center justify-center min-h-48">
+        <label class="tb-label">Original</label>
+        <div class="tb-card tb-flex-center tb-preview-panel">
           <img
             :src="imagePreviewUrl"
             alt="Original"
-            class="max-w-full max-h-96 object-contain"
-            style="image-rendering: auto;"
+            class="tb-img-contain tb-preview-media"
           >
         </div>
       </div>
       <div>
-        <label class="text-xs font-semibold uppercase tracking-wider text-text-muted mb-2 block">SVG</label>
+        <label class="tb-label">SVG</label>
         <div
-          class="bg-surface-overlay border border-border rounded-lg p-4 flex items-center justify-center min-h-48"
+          class="tb-card tb-flex-center tb-preview-panel"
           v-html="outputSvg"
         />
       </div>

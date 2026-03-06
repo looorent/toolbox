@@ -1,0 +1,190 @@
+/* --- Form: Input --- */
+
+.tb-input {
+  width: 100%;
+  background-color: var(--color-surface-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6) var(--spacing-8);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  transition: border-color var(--duration-fast);
+  outline: none;
+}
+
+.tb-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.tb-input:focus {
+  border-color: var(--color-border-focus);
+}
+
+.tb-input--error {
+  border-color: var(--color-error);
+}
+
+.tb-input--small {
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--text-xs);
+}
+
+.tb-input--with-copy {
+  padding-right: 4rem;
+}
+
+/* --- Form: Textarea --- */
+
+.tb-textarea {
+  width: 100%;
+  background-color: var(--color-surface-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6) var(--spacing-8);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  transition: border-color var(--duration-fast);
+  outline: none;
+  resize: vertical;
+}
+
+.tb-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.tb-textarea:focus {
+  border-color: var(--color-border-focus);
+}
+
+.tb-textarea--error {
+  border-color: var(--color-error);
+}
+
+/* --- Form: Label --- */
+
+.tb-label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  margin-top: 0;
+  margin-bottom: var(--spacing-4);
+}
+
+.tb-label__count {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  margin-left: var(--spacing-2);
+}
+
+/* --- Inline label (no bottom margin, used inline next to toggles) --- */
+
+.tb-label--inline {
+  margin-bottom: 0;
+}
+
+/* --- Field header (label row with optional copy button) --- */
+
+.tb-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-4);
+}
+
+.tb-field-header .tb-label {
+  margin-bottom: 0;
+}
+
+/* --- Relative positioning for input overlays --- */
+
+.tb-input-wrapper {
+  position: relative;
+}
+
+.tb-input-wrapper__overlay {
+  position: absolute;
+  right: var(--spacing-4);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* --- Native select --- */
+
+.tb-select {
+  padding: var(--spacing-3) var(--spacing-4);
+  font-size: var(--text-xs);
+  background-color: var(--color-surface-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--duration-fast);
+}
+
+.tb-select:focus {
+  border-color: var(--color-border-focus);
+}
+
+.tb-select--error {
+  border-color: var(--color-error);
+}
+
+.tb-select--sm {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--text-2xs);
+}
+
+/* --- Form: Color input --- */
+
+.tb-color-input {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+/* --- Checkbox --- */
+
+.tb-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  cursor: pointer;
+}
+
+.tb-checkbox__input {
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.tb-checkbox__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* --- Form: Disabled states --- */
+
+.tb-input:disabled,
+.tb-textarea:disabled,
+.tb-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tb-checkbox:has(.tb-checkbox__input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tb-checkbox__input:disabled {
+  cursor: not-allowed;
+}

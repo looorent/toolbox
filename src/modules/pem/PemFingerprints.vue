@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import CopyRow from '@components/CopyRow.vue'
-import { ref, watch } from 'vue'
+import { TbCard, TbKvTable } from '@components'
+import { computed, ref, watch } from 'vue'
 import { computeFingerprints } from './logic'
 import type { Fingerprints } from './types'
 
@@ -18,20 +18,20 @@ watch(() => props.der, async newDer => {
     // Ignore digest errors
   }
 }, { immediate: true })
+
+const entries = computed(() => {
+  if (!fingerprints.value) {
+    return []
+  }
+  return [
+    { key: 'SHA-256', value: fingerprints.value.sha256 },
+    { key: 'SHA-1', value: fingerprints.value.sha1 },
+  ]
+})
 </script>
 
 <template>
-  <div v-if="fingerprints" class="bg-surface-overlay border border-border rounded-lg p-4 space-y-3">
-    <h3 class="text-xs font-semibold uppercase tracking-wider text-text-muted">Fingerprints</h3>
-    <div class="space-y-2 text-sm">
-      <CopyRow :value="fingerprints.sha256">
-        <span class="text-text-muted">SHA-256</span>
-        <p class="font-mono text-text-primary break-all mt-0.5">{{ fingerprints.sha256 }}</p>
-      </CopyRow>
-      <CopyRow :value="fingerprints.sha1">
-        <span class="text-text-muted">SHA-1</span>
-        <p class="font-mono text-text-primary break-all mt-0.5">{{ fingerprints.sha1 }}</p>
-      </CopyRow>
-    </div>
-  </div>
+  <TbCard v-if="fingerprints" title="Fingerprints">
+    <TbKvTable :entries="entries" copyable key-size="xs" />
+  </TbCard>
 </template>

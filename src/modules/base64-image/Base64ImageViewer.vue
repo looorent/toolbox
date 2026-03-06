@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import CopyButton from '@components/CopyButton.vue'
-import CopyStatCard from '@components/CopyStatCard.vue'
+import { TbButton, TbCopyButton, TbFieldInput, TbStatCard } from '@components'
 import { computed, ref, watch } from 'vue'
+import { exampleImageDataUri } from './exampleImage'
 import { base64ByteSize, extractBase64, formatBytes, toDataUri } from './logic'
 import type { ImageMeta } from './types'
 
@@ -27,11 +27,11 @@ watch(input, newInput => {
     } else {
       dataUri.value = uri
       error.value = false
-    
+
       const mimeMatch = uri.match(/^data:(image\/[^;]+);/)
       const format = mimeMatch?.[1] ?? 'unknown'
       const byteSize = base64ByteSize(rawBase64.value)
-    
+
       const img = new Image()
       img.onload = () => {
         meta.value = {
@@ -52,6 +52,10 @@ watch(input, newInput => {
   }
 })
 
+function loadSample(): void {
+  input.value = exampleImageDataUri
+}
+
 function download() {
   if (dataUri.value && meta.value) {
     const extension = meta.value.format.split('/')[1] || 'png'
@@ -64,45 +68,41 @@ function download() {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <p class="text-sm text-text-secondary">Paste a Base64-encoded image (raw or data URI) to preview it.</p>
+  <div class="tb-stack-6">
+    <p class="tb-text-description">Paste a Base64-encoded image (raw or data URI) to preview it.</p>
 
-    <div>
-      <label class="block text-xs font-semibold uppercase tracking-wider text-text-muted mb-2">Base64 Image Data</label>
-      <textarea
-        v-model="input"
-        placeholder="data:image/png;base64,iVBORw0KGgo... or raw base64"
-        rows="4"
-        class="w-full bg-surface-overlay border rounded-lg px-4 py-3 text-sm font-mono text-text-primary placeholder-text-muted focus:outline-none transition-colors resize-y"
-        :class="error ? 'border-error' : 'border-border focus:border-border-focus'"
-      />
-      <p v-if="error" class="mt-1 text-xs text-error">Could not render image — check your Base64 string.</p>
-    </div>
+    <TbFieldInput
+      v-model="input"
+      label="Base64 Image Data"
+      multiline
+      :rows="4"
+      placeholder="data:image/png;base64,iVBORw0KGgo... or raw base64"
+      :error="error"
+      error-message="Could not render image — check your Base64 string."
+    >
+      <template #actions>
+        <TbButton v-if="!input.trim()" variant="secondary" size="sm" @click="loadSample">Load sample</TbButton>
+      </template>
+    </TbFieldInput>
 
-    <div v-if="dataUri" class="space-y-4">
-      <div class="bg-surface-overlay border border-border rounded-lg p-4 flex items-center justify-center min-h-50">
-        <div class="rounded" style="background-image: repeating-conic-gradient(#1a1d2e 0% 25%, #242842 0% 50%); background-size: 16px 16px;">
-          <img :src="dataUri" alt="Preview" class="max-w-full max-h-100 block" />
+    <div v-if="dataUri" class="tb-stack-4">
+      <div class="tb-card tb-flex-center tb-preview-panel">
+        <div class="tb-checkerboard">
+          <img :src="dataUri" alt="Preview" class="tb-img-contain tb-preview-media" />
         </div>
       </div>
 
-      <div v-if="meta" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <CopyStatCard title="Format" :value="meta.format" />
-        <CopyStatCard title="Dimensions" :value="`${meta.width} × ${meta.height}`" />
-        <CopyStatCard title="Size" :value="formatBytes(meta.byteSize)" />
-        <CopyStatCard title="Base64 Length" :value="`${rawBase64.length.toLocaleString()} chars`" />
+      <div v-if="meta" class="tb-grid-4">
+        <TbStatCard title="Format" :value="meta.format" />
+        <TbStatCard title="Dimensions" :value="`${meta.width} × ${meta.height}`" />
+        <TbStatCard title="Size" :value="formatBytes(meta.byteSize)" />
+        <TbStatCard title="Base64 Length" :value="`${rawBase64.length.toLocaleString()} chars`" />
       </div>
 
-      <div class="flex items-center gap-3">
-        <CopyButton :value="dataUri ?? ''" label="Copy Data URI" />
-        <CopyButton :value="rawBase64" label="Copy Raw Base64" />
-        <button
-          type="button"
-          class="px-2 py-1 text-[10px] rounded text-text-muted hover:text-text-primary transition-colors"
-          @click="download"
-        >
-          Download
-        </button>
+      <div class="tb-row tb-row--gap-3">
+        <TbButton size="sm" @click="download">Download</TbButton>
+        <TbCopyButton :value="dataUri ?? ''" label="Copy Data URI" />
+        <TbCopyButton :value="rawBase64" label="Copy Raw Base64" />
       </div>
     </div>
   </div>
