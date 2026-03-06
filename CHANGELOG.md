@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [Technical] Removed TailwindCSS dependencies and utility classes across all components.
 * [Technical] Implemented a custom CSS architecture for layouts and UI elements.
 * [Technical] Integrated a Storybook design system for isolated component development and documentation.
-
+* [Feature] Deploy Storybook documentation under https://design.looorent.com
+ 
 ## [1.0.3] - 2026-03-03
 
 * [Feature] Image to SVG — convert raster images to SVG vector graphics using VTracer WASM, with preset configurations (Default, Smallest file, High fidelity, Pixel art, Posterized) and collapsible advanced parameter panel

@@ -118,6 +118,15 @@ function isActive(tool: Tool): boolean {
           <GithubIcon class="tb-icon-md" />
           <span>source</span>
         </a>
+        <span class="tb-sidebar__footer-separator">·</span>
+        <a
+          href="https://design.looorent.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tb-sidebar__footer-link"
+        >
+          <span>design system</span>
+        </a>
       </div>
     </nav>
   </div>
