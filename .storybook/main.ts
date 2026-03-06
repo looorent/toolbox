@@ -6,17 +6,17 @@ const config: StorybookConfig = {
   addons: ['@storybook/addon-docs'],
   viteFinal(config) {
     const blocklist = ['pwa', 'cloudflare', 'workbox']
-    function shouldKeep(plugin: unknown): boolean {
+    function isBlocked(plugin: unknown): boolean {
       if (!plugin) {
-        return true
+        return false
       }
       if (Array.isArray(plugin)) {
-        return plugin.every(shouldKeep)
+        return plugin.some(isBlocked)
       }
       const name = (plugin as { name?: string }).name ?? ''
-      return !blocklist.some(blocked => name.toLowerCase().includes(blocked))
+      return blocklist.some(blocked => name.toLowerCase().includes(blocked))
     }
-    config.plugins = config.plugins?.filter(shouldKeep)
+    config.plugins = config.plugins?.filter(plugin => !isBlocked(plugin))
     return config
   },
 }
