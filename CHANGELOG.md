@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.5] - 2026-03-06
 
 * [Feature] Convert an image into base64
+* [Bug] The hamburger menu does not open on click
 
 ## [1.0.4] - 2026-03-05
 
