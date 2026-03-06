@@ -1,4 +1,5 @@
 import type { CapturedRequest, HttpMethod, RequestsPage, WebhookMetadata } from '@shared/modules/webhook/types'
+import { formatFileSize } from '@shared/utils/formatFileSize'
 
 export async function createWebhook(): Promise<WebhookMetadata> {
   const response = await fetch('/api/webhooks', { method: 'POST' })
@@ -45,13 +46,7 @@ export function formatBodySize(body: string | null): string {
     return '0 B'
   }
   const bytes = new TextEncoder().encode(body).length
-  if (bytes < 1024) {
-    return `${bytes} B`
-  } else if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`
-  } else {
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
+  return formatFileSize(bytes)
 }
 
 export function tryFormatJson(body: string): string | null {

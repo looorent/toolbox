@@ -1,5 +1,7 @@
 import type { Wiegand26Result } from 'anpr-wiegand'
 
+export type { CountryPlates } from '@shared/modules/wiegand/countries'
+
 export type WiegandMode = 'encode' | 'decode26' | 'decode64'
 
 export interface WiegandEncoded {

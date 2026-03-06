@@ -16,8 +16,7 @@
       "@components": ["src/components/index.ts"],
       "@composables/*": ["src/composables/*"],
       "@modules/*": ["src/modules/*"],
-      "@shared/*": ["shared/*"],
-      "@utils/*": ["src/utils/*"]
+      "@shared/*": ["shared/*"]
     }
   },
   "include": ["env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "shared/**/*.ts"],

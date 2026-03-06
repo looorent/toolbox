@@ -36,3 +36,6 @@ dist-ssr
 *.sw?
 
 /storybook-static
+
+# Script output
+scripts/**/output

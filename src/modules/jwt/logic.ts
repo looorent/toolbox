@@ -1,4 +1,4 @@
-import { relativeTime } from '@utils/relativeTime'
+import { relativeTime } from '@shared/utils/relativeTime'
 import type { DecodedJwt } from './types'
 
 export const CLAIM_LABELS: Record<string, string> = {

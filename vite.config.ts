@@ -55,7 +55,6 @@ export default defineConfig({
       '@composables': fileURLToPath(new URL('./src/composables', import.meta.url)),
       '@modules': fileURLToPath(new URL('./src/modules', import.meta.url)),
       '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
-      '@utils': fileURLToPath(new URL('./src/utils', import.meta.url)),
     },
   },
 })

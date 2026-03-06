@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TbButton, TbCopyButton } from '@components'
-import { formatDateTimeCompact } from '@utils/formatDateTimeCompact'
-import { formatFileSize } from '@utils/formatFileSize'
+import { formatDateTimeCompact } from '@shared/utils/formatDateTimeCompact'
+import { formatFileSize } from '@shared/utils/formatFileSize'
 import { computed } from 'vue'
 import type { ConversionResult } from './types'
 

@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-03-07
+
+* [Feature] Script to generate Parquet files containing mappings between Wiegand26 and text licence plates
+* [Feature] Endpoint to find matching plates for Wiegand26
+
 ## [1.0.5] - 2026-03-06
 
 * [Feature] Convert an image into base64

@@ -54,7 +54,6 @@ Modules may also include sub-component `.vue` files, `logic.test.ts` for unit te
 | `@composables/` | `src/composables/` |
 | `@modules/` | `src/modules/` |
 | `@shared/` | `shared/` |
-| `@utils/` | `src/utils/` |
 
 ## Theme & Design System
 

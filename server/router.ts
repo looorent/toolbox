@@ -32,6 +32,7 @@ import {
   scimServiceProviderConfig,
 } from './modules/scim'
 import { captureWebhookRequest, createWebhook, deleteWebhook, getWebhook, getWebhookOpenApiSpec, listWebhookRequests } from './modules/webhook'
+import { batchLookupWiegandPlates, listWiegandCountries, lookupWiegandPlates } from './modules/wiegand'
 
 type Params = Record<string, string | undefined>
 type Handler = (request: Request, env: Env, params: Params, url: URL, ctx: ExecutionContext) => Promise<Response>
@@ -44,6 +45,11 @@ const routes = [
   route('GET', '/api/webhooks/:id/openapi.json', (_req, env, params, url) => getWebhookOpenApiSpec(env, params.id ?? '', url)),
   route('DELETE', '/api/webhooks/:id', (_req, env, params) => deleteWebhook(env, params.id ?? '')),
   route('*', '/hooks/:id{/*}?', (req, env, params, url) => captureWebhookRequest(req, env, params.id ?? '', url)),
+
+  // Wiegand
+  route('GET', '/api/wiegand/countries', (_req, env) => listWiegandCountries(env)),
+  route('GET', '/api/wiegand/plates/:wiegandValue', (_req, env, params) => batchLookupWiegandPlates(env, params.wiegandValue ?? '')),
+  route('GET', '/api/wiegand/plates/:wiegandValue/:country', (_req, env, params) => lookupWiegandPlates(env, params.country ?? '', params.wiegandValue ?? '')),
 
   // SCIM server management (UI API)
   route('POST', '/api/scim-servers', (req, env) => apiCreateServer(req, env)),

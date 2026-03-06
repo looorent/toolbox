@@ -1,4 +1,4 @@
-import { relativeTime } from '@utils/relativeTime'
+import { relativeTime } from '@shared/utils/relativeTime'
 
 import type { EpochResult, ResultField } from './types'
 

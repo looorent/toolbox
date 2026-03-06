@@ -12,7 +12,7 @@ export async function processWiegand(mode: WiegandMode, input: string): Promise<
       case 'encode':
         return await encodeWiegand(trimmedInput)
       case 'decode26':
-        return { mode, decoded: (await decode26(trimmedInput)) ?? null }
+        return { mode, decoded: (await decode26(normalizeW26Input(trimmedInput))) ?? null }
       case 'decode64':
         return { mode, decoded: (await decode64(trimmedInput)) ?? null }
     }
@@ -22,6 +22,14 @@ export async function processWiegand(mode: WiegandMode, input: string): Promise<
       error: error instanceof Error ? error.message : 'conversion_failed',
     }
   }
+}
+
+function normalizeW26Input(input: string): string {
+  const asNumber = Number(input)
+  if (/^\d+$/.test(input) && Number.isInteger(asNumber) && asNumber >= 0 && asNumber <= 16_777_215) {
+    return asNumber.toString(16).toUpperCase()
+  }
+  return input
 }
 
 async function encodeWiegand(input: string): Promise<WiegandEncoded> {
