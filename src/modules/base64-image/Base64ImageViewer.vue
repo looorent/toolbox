@@ -64,6 +64,8 @@ function onResult(uri: string | null, name?: string) {
 
     <TbOptionGroup v-model="mode" variant="segmented" label="Mode" :options="modeOptions" />
 
+    <div class="tb-separator" />
+
     <Base64DecodeInput v-if="mode === 'decode'" ref="decodeInput" @result="uri => onResult(uri)" />
     <Base64EncodeInput v-else ref="encodeInput" @result="onResult" />
 

@@ -94,14 +94,27 @@ function handleSearchKeydown(event: KeyboardEvent) {
       class="tb-dropdown__menu tb-dropdown--fixed-width"
     >
       <div class="tb-dropdown__search">
-        <input
-          v-model="search"
-          :placeholder="placeholder"
-          class="tb-dropdown__search-input"
-          :aria-controls="listboxId"
-          :aria-activedescendant="activeIndex >= 0 ? optionId(activeIndex) : undefined"
-          @keydown="handleSearchKeydown"
-        />
+        <div class="tb-search-field">
+          <input
+            v-model="search"
+            :placeholder="placeholder"
+            class="tb-dropdown__search-input"
+            :aria-controls="listboxId"
+            :aria-activedescendant="activeIndex >= 0 ? optionId(activeIndex) : undefined"
+            @keydown="handleSearchKeydown"
+          />
+          <button
+            v-if="search"
+            type="button"
+            class="tb-search-field__clear"
+            aria-label="Clear search"
+            @click="search = ''"
+          >
+            <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div :id="listboxId" role="listbox" class="tb-dropdown__list">
         <button

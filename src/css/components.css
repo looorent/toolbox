@@ -1107,15 +1107,62 @@
   min-height: 20rem;
 }
 
+.tb-preview-panel--ambient {
+  position: relative;
+  overflow: hidden;
+}
+
+.tb-preview-panel--ambient::before {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, var(--color-accent-15), transparent 70%);
+  top: -15%;
+  left: -8%;
+  border-radius: 50%;
+  animation: tb-drift 8s ease-in-out infinite alternate;
+}
+
+.tb-preview-panel--ambient::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, var(--color-accent-10), transparent 70%);
+  bottom: -10%;
+  right: -5%;
+  border-radius: 50%;
+  animation: tb-drift 10s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes tb-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(15px, -10px) scale(1.1);
+  }
+}
+
 .tb-preview-media {
   display: block;
   max-height: 24rem;
+  position: relative;
+  z-index: 1;
 }
 
 .tb-preview-media--full {
   width: 100%;
   height: auto;
   max-height: 32rem;
+}
+
+/* --- Gradient separator --- */
+
+.tb-separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-15) 30%, var(--color-accent-10) 70%, transparent);
 }
 
 /* --- Webhook request list sidebar --- */

@@ -3,10 +3,15 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
 export default defineConfig({
   plugins: [
     cloudflare(),
     vue(),
+    vueDevTools({
+      launchEditor: 'code',
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['logo.svg'],

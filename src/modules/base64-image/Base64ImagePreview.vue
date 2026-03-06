@@ -26,7 +26,7 @@ function download() {
 
 <template>
   <div class="tb-stack-4">
-    <div class="tb-card tb-flex-center tb-preview-panel">
+    <div class="tb-card tb-flex-center tb-preview-panel tb-preview-panel--ambient">
       <div class="tb-checkerboard">
         <img :src="dataUri" alt="Preview" class="tb-img-contain tb-preview-media" />
       </div>

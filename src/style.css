@@ -1,25 +1,25 @@
 :root {
   /* Surfaces */
-  --color-surface: #0f1117;
-  --color-surface-raised: #1a1d2e;
-  --color-surface-overlay: #242842;
+  --color-surface: #0e120f;
+  --color-surface-raised: #181e1a;
+  --color-surface-overlay: #232d24;
 
   /* Borders */
-  --color-border: #565e8c;
-  --color-border-focus: #5f61e8;
+  --color-border: #2e3a2c;
+  --color-border-focus: #7a9a60;
 
   /* Accent */
-  --color-accent: #5f61e8;
-  --color-accent-hover: #818cf8;
-  --color-accent-text: #818cf8;
+  --color-accent: #7a9a60;
+  --color-accent-hover: #8aac6c;
+  --color-accent-text: #8aac6c;
 
   /* Text */
-  --color-text-primary: #e2e8f0;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #7a8a9b;
+  --color-text-primary: #dce4d0;
+  --color-text-secondary: #99a88e;
+  --color-text-muted: #56634e;
 
   /* On-accent (text on colored backgrounds) */
-  --color-text-on-accent: #ffffff;
+  --color-text-on-accent: #0e120f;
 
   /* Semantic */
   --color-success: #22c55e;
@@ -98,27 +98,27 @@
   --color-surface-80: color-mix(in srgb, var(--color-surface) 80%, transparent);
 
   /* JWT colors */
-  --color-jwt-header: #f87171;
-  --color-jwt-payload: #c084fc;
-  --color-jwt-signature: #22d3ee;
+  --color-jwt-header: #e07060;
+  --color-jwt-payload: #a88cc0;
+  --color-jwt-signature: #5cb8a0;
 
   /* HTTP method colors */
-  --color-http-get: #34d399;
+  --color-http-get: #6aab70;
   --color-http-get-10: color-mix(in srgb, var(--color-http-get) 10%, transparent);
   --color-http-get-20: color-mix(in srgb, var(--color-http-get) 20%, transparent);
-  --color-http-post: #60a5fa;
+  --color-http-post: #6a9ab8;
   --color-http-post-10: color-mix(in srgb, var(--color-http-post) 10%, transparent);
   --color-http-post-20: color-mix(in srgb, var(--color-http-post) 20%, transparent);
-  --color-http-put: #facc15;
+  --color-http-put: #c8b44a;
   --color-http-put-10: color-mix(in srgb, var(--color-http-put) 10%, transparent);
   --color-http-put-20: color-mix(in srgb, var(--color-http-put) 20%, transparent);
-  --color-http-patch: #fb923c;
+  --color-http-patch: #c89060;
   --color-http-patch-10: color-mix(in srgb, var(--color-http-patch) 10%, transparent);
   --color-http-patch-20: color-mix(in srgb, var(--color-http-patch) 20%, transparent);
-  --color-http-delete: #f87171;
+  --color-http-delete: #c06858;
   --color-http-delete-10: color-mix(in srgb, var(--color-http-delete) 10%, transparent);
   --color-http-delete-20: color-mix(in srgb, var(--color-http-delete) 20%, transparent);
-  --color-http-head: #c084fc;
+  --color-http-head: #a088b8;
   --color-http-head-10: color-mix(in srgb, var(--color-http-head) 10%, transparent);
   --color-http-head-20: color-mix(in srgb, var(--color-http-head) 20%, transparent);
 }

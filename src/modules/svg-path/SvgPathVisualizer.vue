@@ -6,7 +6,7 @@ import SvgPathInput from './SvgPathInput.vue'
 import SvgPathPreview from './SvgPathPreview.vue'
 
 const pathData = ref('')
-const stroke = ref('#6366f1')
+const stroke = ref('#7a9a60')
 const fill = ref('none')
 const showGrid = ref(true)
 const error = ref(false)

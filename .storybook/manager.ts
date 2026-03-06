@@ -9,44 +9,44 @@ const theme = create({
   brandTarget: '_self',
 
   // Colors — match toolbox tokens
-  colorPrimary: '#5f61e8',
-  colorSecondary: '#5f61e8',
+  colorPrimary: '#7a9a60',
+  colorSecondary: '#7a9a60',
 
   // UI
-  appBg: '#0f1117',
-  appContentBg: '#0f1117',
-  appPreviewBg: '#0f1117',
-  appBorderColor: '#565e8c',
+  appBg: '#0e120f',
+  appContentBg: '#0e120f',
+  appPreviewBg: '#0e120f',
+  appBorderColor: '#2e3a2c',
   appBorderRadius: 8,
 
   // Text
-  textColor: '#e2e8f0',
-  textMutedColor: '#7a8a9b',
-  textInverseColor: '#0f1117',
+  textColor: '#dce4d0',
+  textMutedColor: '#56634e',
+  textInverseColor: '#0e120f',
 
   // Toolbar
-  barBg: '#1a1d2e',
-  barTextColor: '#94a3b8',
-  barSelectedColor: '#818cf8',
-  barHoverColor: '#818cf8',
+  barBg: '#181e1a',
+  barTextColor: '#99a88e',
+  barSelectedColor: '#8aac6c',
+  barHoverColor: '#8aac6c',
 
   // Inputs
-  inputBg: '#1a1d2e',
-  inputBorder: '#565e8c',
-  inputTextColor: '#e2e8f0',
+  inputBg: '#181e1a',
+  inputBorder: '#2e3a2c',
+  inputTextColor: '#dce4d0',
   inputBorderRadius: 4,
 
   // Buttons
-  buttonBg: '#1a1d2e',
-  buttonBorder: '#565e8c',
+  buttonBg: '#181e1a',
+  buttonBorder: '#2e3a2c',
 
   // Fonts
   fontBase: '"Inter", ui-sans-serif, system-ui, sans-serif',
   fontCode: '"JetBrains Mono", ui-monospace, monospace',
 
   // Boolean
-  booleanBg: '#1a1d2e',
-  booleanSelectedBg: '#5f61e8',
+  booleanBg: '#181e1a',
+  booleanSelectedBg: '#7a9a60',
 })
 
 addons.setConfig({ theme })

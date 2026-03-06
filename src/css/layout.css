@@ -375,6 +375,7 @@
   font-weight: 500;
   color: var(--color-text-muted);
   text-decoration: none;
+  cursor: pointer;
   transition:
     color var(--duration-fast),
     background-color var(--duration-fast);

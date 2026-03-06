@@ -188,3 +188,27 @@
 .tb-checkbox__input:disabled {
   cursor: not-allowed;
 }
+
+/* --- Search field with clear button --- */
+
+.tb-search-field {
+  position: relative;
+}
+
+.tb-search-field__clear {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--duration-fast);
+}
+
+.tb-search-field__clear:hover {
+  color: var(--color-text-primary);
+}

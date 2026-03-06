@@ -61,12 +61,24 @@ function isActive(tool: Tool): boolean {
         </button>
       </div>
       <div class="tb-sidebar__search">
-        <TbInput
-          v-model="searchQuery"
-          type="search"
-          placeholder="Search tools…"
-          class="tb-sidebar__search-input"
-        />
+        <div class="tb-search-field">
+          <TbInput
+            v-model="searchQuery"
+            placeholder="Search tools…"
+            class="tb-sidebar__search-input"
+          />
+          <button
+            v-if="searchQuery"
+            type="button"
+            class="tb-search-field__clear"
+            aria-label="Clear search"
+            @click="searchQuery = ''"
+          >
+            <svg class="tb-icon-sm" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="tb-sidebar__nav tb-stack-4">
         <div v-if="!searchQuery && recentTools.length > 0">

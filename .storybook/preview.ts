@@ -7,20 +7,20 @@ const docsTheme = create({
   base: 'dark',
   fontBase: '"Inter", ui-sans-serif, system-ui, sans-serif',
   fontCode: '"JetBrains Mono", ui-monospace, monospace',
-  colorPrimary: '#5f61e8',
-  colorSecondary: '#5f61e8',
-  appBg: '#0f1117',
-  appContentBg: '#0f1117',
-  textColor: '#e2e8f0',
-  textMutedColor: '#7a8a9b',
-  barBg: '#1a1d2e',
+  colorPrimary: '#7a9a60',
+  colorSecondary: '#7a9a60',
+  appBg: '#0e120f',
+  appContentBg: '#0e120f',
+  textColor: '#dce4d0',
+  textMutedColor: '#56634e',
+  barBg: '#181e1a',
 })
 
 const preview: Preview = {
   parameters: {
     backgrounds: {
       default: 'dark',
-      values: [{ name: 'dark', value: '#0f1117' }],
+      values: [{ name: 'dark', value: '#0e120f' }],
     },
     docs: {
       theme: docsTheme,
