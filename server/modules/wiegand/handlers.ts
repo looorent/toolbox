@@ -18,18 +18,27 @@ export async function listWiegandCountries(env: Env): Promise<Response> {
   }
 }
 
-export async function batchLookupWiegandPlates(env: Env, wiegandValue: string): Promise<Response> {
+export async function batchLookupWiegandPlates(request: Request, env: Env, wiegandValue: string): Promise<Response> {
   const wiegand26 = Number(wiegandValue)
   if (!isValidWiegand26(wiegand26)) {
     return Response.json({ error: 'invalid_wiegand26_value', value: wiegandValue }, { status: 400 })
   }
 
+  const signal = request.signal
+
   try {
     const listed = await env.R2.list({ delimiter: '/' })
     const availableCodes = listed.delimitedPrefixes.map(prefix => prefix.replace('/', '')).filter(code => WIEGAND_COUNTRY_CODES.has(code))
 
+    if (signal.aborted) {
+      return new Response(null, { status: 499 })
+    }
+
     const results = await Promise.all(
       availableCodes.map(async country => {
+        if (signal.aborted) {
+          return { country, plates: [], error: null }
+        }
         try {
           const plates = await findPlatesByWiegand(env, country, wiegand26)
           return { country, plates: plates ?? [], error: null }
@@ -38,6 +47,10 @@ export async function batchLookupWiegandPlates(env: Env, wiegandValue: string): 
         }
       }),
     )
+
+    if (signal.aborted) {
+      return new Response(null, { status: 499 })
+    }
 
     return Response.json({ results })
   } catch (error) {

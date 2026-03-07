@@ -48,7 +48,7 @@ const routes = [
 
   // Wiegand
   route('GET', '/api/wiegand/countries', (_req, env) => listWiegandCountries(env)),
-  route('GET', '/api/wiegand/plates/:wiegandValue', (_req, env, params) => batchLookupWiegandPlates(env, params.wiegandValue ?? '')),
+  route('GET', '/api/wiegand/plates/:wiegandValue', (req, env, params) => batchLookupWiegandPlates(req, env, params.wiegandValue ?? '')),
   route('GET', '/api/wiegand/plates/:wiegandValue/:country', (_req, env, params) => lookupWiegandPlates(env, params.country ?? '', params.wiegandValue ?? '')),
 
   // SCIM server management (UI API)

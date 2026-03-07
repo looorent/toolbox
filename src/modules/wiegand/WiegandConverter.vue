@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TbCard, TbExpandable, TbInput, TbOptionGroup, type TbOptionGroupOption } from '@components'
 import type { WiegandCountry } from '@shared/modules/wiegand/countries'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { processWiegand } from './logic'
 import { fetchSupportedCountries, lookupPlatesForAllCountries } from './repository'
 import type { CountryPlates, Decode26InputFormat, WiegandMode, WiegandResult } from './types'
@@ -16,6 +16,8 @@ const plateLookupLoading = ref(false)
 const supportedCountries = ref<WiegandCountry[]>([])
 
 let convertGeneration = 0
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+let abortController: AbortController | null = null
 
 const modes: TbOptionGroupOption[] = [
   { value: 'encode', label: 'Plate → Wiegand' },
@@ -45,7 +47,21 @@ onMounted(async () => {
   supportedCountries.value = await fetchSupportedCountries()
 })
 
+onUnmounted(cancelPending)
+
+function cancelPending(): void {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer)
+    debounceTimer = null
+  }
+  if (abortController) {
+    abortController.abort()
+    abortController = null
+  }
+}
+
 function clearInput(): void {
+  cancelPending()
   convertGeneration++
   input.value = ''
   result.value = null
@@ -58,7 +74,10 @@ function clearAll(): void {
   clearInput()
 }
 
+const DEBOUNCE_MS = 300
+
 async function convert(): Promise<void> {
+  cancelPending()
   const generation = ++convertGeneration
   const wiegandResult = await processWiegand(mode.value, input.value, decode26Format.value)
 
@@ -70,7 +89,8 @@ async function convert(): Promise<void> {
 
   if (wiegandResult?.mode === 'decode26' && wiegandResult.decoded) {
     plateLookupLoading.value = true
-    const results = await lookupPlatesForAllCountries(wiegandResult.decoded.wiegand26InDecimal)
+    abortController = new AbortController()
+    const results = await lookupPlatesForAllCountries(wiegandResult.decoded.wiegand26InDecimal, abortController.signal)
 
     if (generation !== convertGeneration) {
       return
@@ -84,7 +104,12 @@ async function convert(): Promise<void> {
   }
 }
 
-watch(input, convert)
+function debouncedConvert(): void {
+  cancelPending()
+  debounceTimer = setTimeout(convert, DEBOUNCE_MS)
+}
+
+watch(input, debouncedConvert)
 watch(mode, clearAll)
 watch(decode26Format, clearInput)
 </script>
