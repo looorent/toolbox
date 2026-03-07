@@ -19,8 +19,8 @@ function createS3Client(): S3Client {
 
   if (!accountId || !accessKeyId || !secretAccessKey) {
     throw new Error(
-      'Missing R2 credentials. Set TOOLBOX_CF_ACCOUNT_ID, TOOLBOX_CF_R2_ACCESS_KEY_ID, and TOOLBOX_CF_R2_SECRET_ACCESS_KEY environment variables.\n'
-        + 'Create an R2 API token at: https://dash.cloudflare.com → R2 → Manage R2 API Tokens',
+      'Missing R2 credentials. Set TOOLBOX_CF_ACCOUNT_ID, TOOLBOX_CF_R2_ACCESS_KEY_ID, and TOOLBOX_CF_R2_SECRET_ACCESS_KEY environment variables.\n' +
+        'Create an R2 API token at: https://dash.cloudflare.com → R2 → Manage R2 API Tokens',
     )
   }
 
