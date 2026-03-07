@@ -13,6 +13,7 @@ const input = ref<string>('')
 const result = ref<WiegandResult | null>(null)
 const plateLookups = ref<CountryPlates[]>([])
 const plateLookupLoading = ref(false)
+const plateLookupError = ref<string | null>(null)
 const supportedCountries = ref<WiegandCountry[]>([])
 
 let convertGeneration = 0
@@ -67,6 +68,7 @@ function clearInput(): void {
   result.value = null
   plateLookups.value = []
   plateLookupLoading.value = false
+  plateLookupError.value = null
 }
 
 function clearAll(): void {
@@ -74,7 +76,7 @@ function clearAll(): void {
   clearInput()
 }
 
-const DEBOUNCE_MS = 300
+const DEBOUNCE_MS = 600
 
 async function convert(): Promise<void> {
   cancelPending()
@@ -89,19 +91,26 @@ async function convert(): Promise<void> {
 
   if (wiegandResult?.mode === 'decode26' && wiegandResult.decoded) {
     plateLookupLoading.value = true
+    plateLookupError.value = null
     abortController = new AbortController()
-    const results = await lookupPlatesForAllCountries(wiegandResult.decoded.wiegand26InDecimal, abortController.signal)
+    const lookup = await lookupPlatesForAllCountries(wiegandResult.decoded.wiegand26InDecimal, abortController.signal)
 
     if (generation !== convertGeneration) {
       return
     }
 
-    plateLookups.value = results
+    plateLookups.value = lookup.results
+    plateLookupError.value = lookup.error
     plateLookupLoading.value = false
   } else {
     plateLookups.value = []
+    plateLookupError.value = null
     plateLookupLoading.value = false
   }
+}
+
+function retryPlateLookup(): void {
+  convert()
 }
 
 function debouncedConvert(): void {
@@ -143,7 +152,9 @@ watch(decode26Format, clearInput)
       :result="result"
       :plate-lookups="plateLookups"
       :plate-lookup-loading="plateLookupLoading"
+      :plate-lookup-error="plateLookupError"
       :supported-countries="supportedCountries"
+      @retry-plate-lookup="retryPlateLookup"
     />
 
     <TbCard v-if="mode === 'decode26'" title="Supported Countries">

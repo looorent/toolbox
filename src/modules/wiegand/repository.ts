@@ -14,20 +14,25 @@ export async function fetchSupportedCountries(): Promise<WiegandCountry[]> {
   }
 }
 
-export async function lookupPlatesForAllCountries(wiegandDecimal: number, signal?: AbortSignal): Promise<CountryPlates[]> {
+export interface PlatesLookupResult {
+  results: CountryPlates[]
+  error: string | null
+}
+
+export async function lookupPlatesForAllCountries(wiegandDecimal: number, signal?: AbortSignal): Promise<PlatesLookupResult> {
   const url = `/api/wiegand/plates/${wiegandDecimal}`
   try {
     const response = await fetch(url, { signal })
     if (!response.ok) {
-      return []
+      return { results: [], error: `Server error (${response.status})` }
     }
     const body = (await response.json()) as { results: CountryPlates[] }
-    return body.results
+    return { results: body.results, error: null }
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {
-      return []
+      return { results: [], error: null }
     }
-    console.error(`An error occurred when calling '${url}'. Returning [].`, error)
-    return []
+    console.error(`An error occurred when calling '${url}'.`, error)
+    return { results: [], error: 'Failed to look up plates. The server may be overloaded.' }
   }
 }

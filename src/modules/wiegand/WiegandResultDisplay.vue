@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TbCard, TbKvTable, TbTag } from '@components'
+import { TbButton, TbCard, TbKvTable, TbTag } from '@components'
 import type { WiegandCountry } from '@shared/modules/wiegand/countries'
 import { computed } from 'vue'
 import type { CountryPlates, WiegandResult } from './types'
@@ -8,12 +8,18 @@ const props = withDefaults(defineProps<{
   result: WiegandResult
   plateLookups?: CountryPlates[]
   plateLookupLoading?: boolean
+  plateLookupError?: string | null
   supportedCountries?: WiegandCountry[]
 }>(), {
   plateLookups: () => [],
   plateLookupLoading: false,
+  plateLookupError: null,
   supportedCountries: () => [],
 })
+
+const emit = defineEmits<{
+  retryPlateLookup: []
+}>()
 
 const countryNameByCode = computed(() => new Map(props.supportedCountries.map(country => [country.code, country.name])))
 const countriesWithPlates = computed(() => props.plateLookups.filter(lookup => lookup.plates.length > 0 || lookup.error))
@@ -76,6 +82,10 @@ const decode26Entries = computed(() => {
     <TbCard title="Plate Lookup">
       <div v-if="plateLookupLoading" class="tb-text-description">
         Looking up plates...
+      </div>
+      <div v-else-if="plateLookupError" class="tb-alert tb-alert--error tb-row tb-row--between">
+        <span>{{ plateLookupError }}</span>
+        <TbButton variant="secondary" size="sm" @click="emit('retryPlateLookup')">Retry</TbButton>
       </div>
       <div v-else class="tb-stack-4">
         <div v-for="lookup in countriesWithPlates" :key="lookup.country">

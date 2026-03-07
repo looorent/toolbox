@@ -23,11 +23,11 @@ export async function findPlatesByWiegand(env: Env, country: string, wiegand26: 
     file,
     columns: ['wiegand26', 'plates'],
     rowFormat: 'object',
+    filter: { wiegand26: { $eq: wiegand26 } },
   })) as ParquetRow[]
 
-  const match = rows.find(row => row.wiegand26 === wiegand26)
-  if (match) {
-    return match.plates.split(',')
+  if (rows.length > 0) {
+    return rows[0].plates.split(',')
   } else {
     return null
   }
