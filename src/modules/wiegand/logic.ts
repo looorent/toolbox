@@ -1,3 +1,4 @@
+import type { Wiegand26Result } from 'anpr-wiegand'
 import { decode26, decode64, encode26, encode64 } from 'anpr-wiegand'
 import type { Decode26InputFormat, WiegandDecoded26, WiegandEncoded, WiegandMode, WiegandResult } from './types'
 
@@ -33,14 +34,13 @@ async function decode26WithFormat(input: string, format: Decode26InputFormat): P
     case 'decimal': {
       const asNumber = Number(input)
       if (!/^\d+$/.test(input) || !Number.isInteger(asNumber) || asNumber < 0 || asNumber > 16_777_215) {
-        return { mode: 'error', error: 'Invalid decimal value (must be 0–16777215)' }
+        return { mode: 'error', error: 'Invalid decimal value (must be 0-16777215)' }
       }
       const hex = asNumber.toString(16).toUpperCase()
       return { mode: 'decode26', decoded: (await decode26(hex)) ?? null }
     }
-    case 'hex': {
+    case 'hex':
       return { mode: 'decode26', decoded: (await decode26(input)) ?? null }
-    }
     case 'plate': {
       const encoded = await encode26(input)
       if (!encoded) {

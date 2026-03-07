@@ -224,7 +224,7 @@ function* streamLuxembourgSlice(sliceIndex: number): Generator<string> {
 }
 
 // ── Netherlands ──────────────────────────────────────────────────────
-// Sidecodes 6–9:
+// Sidecodes 6-9:
 //   6: 99XXXX (45,697,600)  7: XX99XX (45,697,600)
 //   8: 9XXX99 (17,576,000)  9: X999XX (17,576,000)
 // Total: 126,547,200 — Slices: 26

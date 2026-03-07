@@ -29,7 +29,7 @@ export const WIEGAND_COUNTRIES: WiegandCountry[] = [
   { code: 'LU', name: 'Luxembourg', pattern: 'NNNNNN' },
   { code: 'LV', name: 'Latvia', pattern: 'LL-NNNN' },
   { code: 'MT', name: 'Malta', pattern: 'LLL-NNN' },
-  { code: 'NL', name: 'Netherlands', pattern: 'Sidecodes 6–9' },
+  { code: 'NL', name: 'Netherlands', pattern: 'Sidecodes 6-9' },
   { code: 'NO', name: 'Norway', pattern: 'LL-NNNNN' },
   { code: 'PL', name: 'Poland', pattern: 'LL-NNNNN' },
   { code: 'PT', name: 'Portugal', pattern: 'LL-NN-LL' },

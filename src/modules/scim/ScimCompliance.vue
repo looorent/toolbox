@@ -153,7 +153,7 @@ function statusClass(status: Status): string {
               :key="item"
               class="tb-row tb-items-start tb-text-xs tb-text-secondary"
             >
-              <span class="tb-text-muted tb-flex-shrink-0 tb-mt-1">–</span>
+              <span class="tb-text-muted tb-flex-shrink-0 tb-mt-1">-</span>
               <span>{{ item }}</span>
             </li>
           </ul>

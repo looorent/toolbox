@@ -27,7 +27,7 @@
     "clean:d1": "rm -rf .wrangler/state/v3/d1",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "script:generate-wiegand-parquet": "tsx --max-old-space-size=4096 scripts/generate-wiegand-parquet/index.ts"
+    "script:generate-wiegand-parquet": "dotenv -e .dev.vars -- tsx --max-old-space-size=4096 scripts/generate-wiegand-parquet/index.ts"
   },
   "dependencies": {
     "@codemirror/lang-json": "6.0.2",
@@ -51,6 +51,8 @@
     "vue-router": "5.0.3"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.1004.0",
+    "@aws-sdk/lib-storage": "3.1004.0",
     "@biomejs/biome": "2.4.6",
     "@cloudflare/vite-plugin": "1.26.1",
     "@storybook/addon-docs": "10.2.16",

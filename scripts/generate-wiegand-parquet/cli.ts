@@ -52,8 +52,13 @@ Usage:
 Options:
   -c, --country <code>  Country code to process (${AVAILABLE_CODES})
   -u, --upload          Upload generated files to Cloudflare R2
-  -l, --local           Upload to local Miniflare R2 instead of remote
+  -l, --local           Upload to local Miniflare R2 (via wrangler) instead of remote (via S3 API)
   -h, --help            Show this help message
+
+Environment variables (required for --upload without --local):
+  TOOLBOX_CF_ACCOUNT_ID          Your Cloudflare account ID
+  TOOLBOX_CF_R2_ACCESS_KEY_ID    R2 API token access key
+  TOOLBOX_CF_R2_SECRET_ACCESS_KEY R2 API token secret key
 
 Examples:
   pnpm run script:generate-wiegand-parquet -- --country LU
