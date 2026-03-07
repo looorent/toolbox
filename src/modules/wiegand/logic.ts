@@ -1,4 +1,3 @@
-import type { Wiegand26Result } from 'anpr-wiegand'
 import { decode26, decode64, encode26, encode64 } from 'anpr-wiegand'
 import type { Decode26InputFormat, WiegandDecoded26, WiegandEncoded, WiegandMode, WiegandResult } from './types'
 
