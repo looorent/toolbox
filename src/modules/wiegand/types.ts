@@ -3,6 +3,7 @@ import type { Wiegand26Result } from 'anpr-wiegand'
 export type { CountryPlates } from '@shared/modules/wiegand/countries'
 
 export type WiegandMode = 'encode' | 'decode26' | 'decode64'
+export type Decode26InputFormat = 'decimal' | 'hex' | 'plate'
 
 export interface WiegandEncoded {
   mode: 'encode'

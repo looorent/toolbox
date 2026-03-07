@@ -85,7 +85,7 @@ describe('processWiegand', () => {
     })
   })
 
-  describe('decode26 mode', () => {
+  describe('decode26 mode — hex format', () => {
     it('decodes a valid W26 hex string', async () => {
       const encoded = await processWiegand('encode', 'ABC 123')
       if (encoded?.mode !== 'encode' || !encoded.encoded26) {
@@ -93,7 +93,7 @@ describe('processWiegand', () => {
       }
       const hex = encoded.encoded26.wiegand26InHexadecimal
 
-      const result = await processWiegand('decode26', hex)
+      const result = await processWiegand('decode26', hex, 'hex')
 
       expect(result).toEqual({
         mode: 'decode26',
@@ -113,7 +113,7 @@ describe('processWiegand', () => {
         throw new Error('encode failed')
       }
 
-      const decoded = await processWiegand('decode26', encoded.encoded26.wiegand26InHexadecimal)
+      const decoded = await processWiegand('decode26', encoded.encoded26.wiegand26InHexadecimal, 'hex')
 
       expect(decoded).toEqual({
         mode: 'decode26',
@@ -128,10 +128,66 @@ describe('processWiegand', () => {
       }
       const hex = encoded.encoded26.wiegand26InHexadecimal
 
-      const trimmed = await processWiegand('decode26', `  ${hex}  `)
-      const plain = await processWiegand('decode26', hex)
+      const trimmed = await processWiegand('decode26', `  ${hex}  `, 'hex')
+      const plain = await processWiegand('decode26', hex, 'hex')
 
       expect(trimmed).toEqual(plain)
+    })
+  })
+
+  describe('decode26 mode — decimal format', () => {
+    it('decodes a valid decimal value', async () => {
+      const result = await processWiegand('decode26', '12345', 'decimal')
+
+      expect(result).toEqual({
+        mode: 'decode26',
+        decoded: {
+          wiegand26InHexadecimal: expect.any(String),
+          wiegand26InDecimal: expect.any(Number),
+          facilityCode: expect.any(Number),
+          idNumber: expect.any(Number),
+          facilityCodeAndIdNumber: expect.any(Number),
+        },
+      })
+    })
+
+    it('returns error for non-numeric input', async () => {
+      const result = await processWiegand('decode26', 'notanumber', 'decimal')
+
+      expect(result?.mode).toBe('error')
+    })
+
+    it('returns error for value exceeding max', async () => {
+      const result = await processWiegand('decode26', '16777216', 'decimal')
+
+      expect(result?.mode).toBe('error')
+    })
+  })
+
+  describe('decode26 mode — plate format', () => {
+    it('encodes the plate and returns the decoded result', async () => {
+      const result = await processWiegand('decode26', 'ABC 123', 'plate')
+
+      expect(result?.mode).toBe('decode26')
+      if (result?.mode === 'decode26') {
+        expect(result.decoded).not.toBeNull()
+        expect(result.decoded?.wiegand26InDecimal).toBeGreaterThan(0)
+      }
+    })
+
+    it('returns the same W26 value as direct encoding', async () => {
+      const encoded = await processWiegand('encode', 'ABC 123')
+      const similar = await processWiegand('decode26', 'ABC 123', 'plate')
+
+      if (encoded?.mode === 'encode' && similar?.mode === 'decode26') {
+        expect(similar.decoded?.wiegand26InDecimal).toBe(encoded.encoded26?.wiegand26InDecimal)
+      }
+    })
+
+    it('returns error for plates that cannot be encoded', async () => {
+      const result = await processWiegand('decode26', 'ABCDEFGHIJKLMNOP', 'plate')
+
+      expect(result?.mode).toBe('error')
     })
   })
 

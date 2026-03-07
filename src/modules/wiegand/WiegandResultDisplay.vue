@@ -44,9 +44,10 @@ const decode26Entries = computed(() => {
   }
   const decoded = props.result.decoded
   return [
+    { key: 'Hex', value: decoded.wiegand26InHexadecimal },
+    { key: 'Decimal', value: decoded.wiegand26InDecimal.toString() },
     { key: 'Facility Code', value: decoded.facilityCode.toString() },
     { key: 'ID Number', value: decoded.idNumber.toString() },
-    { key: 'Decimal', value: decoded.wiegand26InDecimal.toString() },
     { key: 'FC + ID Combined', value: decoded.facilityCodeAndIdNumber.toString() },
   ]
 })

@@ -4,10 +4,11 @@ import type { WiegandCountry } from '@shared/modules/wiegand/countries'
 import { onMounted, ref, watch } from 'vue'
 import { processWiegand } from './logic'
 import { fetchSupportedCountries, lookupPlatesForAllCountries } from './repository'
-import type { CountryPlates, WiegandMode, WiegandResult } from './types'
+import type { CountryPlates, Decode26InputFormat, WiegandMode, WiegandResult } from './types'
 import WiegandResultDisplay from './WiegandResultDisplay.vue'
 
 const mode = ref<WiegandMode>('encode')
+const decode26Format = ref<Decode26InputFormat>('decimal')
 const input = ref<string>('')
 const result = ref<WiegandResult | null>(null)
 const plateLookups = ref<CountryPlates[]>([])
@@ -22,17 +23,29 @@ const modes: TbOptionGroupOption[] = [
   { value: 'decode64', label: 'Decode W64' },
 ]
 
-const modeConfig: Record<WiegandMode, { label: string; placeholder: string }> = {
+const decode26Formats: TbOptionGroupOption[] = [
+  { value: 'decimal', label: 'Decimal' },
+  { value: 'hex', label: 'Hexadecimal' },
+  { value: 'plate', label: 'Similar plates' },
+]
+
+const inputConfig: Record<WiegandMode, { label: string; placeholder: string }> = {
   encode: { label: 'License plate (max 10 chars)', placeholder: 'e.g. ABC 123' },
-  decode26: { label: 'Wiegand 26-bit (hex or decimal)', placeholder: 'e.g. 1A98B4B or 27793227' },
+  decode26: { label: '', placeholder: '' },
   decode64: { label: 'Wiegand 64-bit hex (16 chars)', placeholder: 'e.g. 6000011C1FBD3615' },
+}
+
+const decode26InputConfig: Record<Decode26InputFormat, { label: string; placeholder: string }> = {
+  decimal: { label: 'Wiegand 26-bit decimal value', placeholder: 'e.g. 9132458' },
+  hex: { label: 'Wiegand 26-bit hexadecimal value', placeholder: 'e.g. 1A98B4B' },
+  plate: { label: 'License plate to find collisions for', placeholder: 'e.g. ABC123' },
 }
 
 onMounted(async () => {
   supportedCountries.value = await fetchSupportedCountries()
 })
 
-function clear(): void {
+function clearInput(): void {
   convertGeneration++
   input.value = ''
   result.value = null
@@ -40,9 +53,14 @@ function clear(): void {
   plateLookupLoading.value = false
 }
 
+function clearAll(): void {
+  decode26Format.value = 'decimal'
+  clearInput()
+}
+
 async function convert(): Promise<void> {
   const generation = ++convertGeneration
-  const wiegandResult = await processWiegand(mode.value, input.value)
+  const wiegandResult = await processWiegand(mode.value, input.value, decode26Format.value)
 
   if (generation !== convertGeneration) {
     return
@@ -67,7 +85,8 @@ async function convert(): Promise<void> {
 }
 
 watch(input, convert)
-watch(mode, clear)
+watch(mode, clearAll)
+watch(decode26Format, clearInput)
 </script>
 
 <template>
@@ -75,11 +94,23 @@ watch(mode, clear)
 
     <TbOptionGroup v-model="mode" :options="modes" />
 
+    <TbOptionGroup
+      v-if="mode === 'decode26'"
+      v-model="decode26Format"
+      :options="decode26Formats"
+      variant="segmented"
+      label="Input format"
+      size="sm"
+    />
+
     <div>
       <label class="tb-label">
-        {{ modeConfig[mode].label }}
+        {{ mode === 'decode26' ? decode26InputConfig[decode26Format].label : inputConfig[mode].label }}
       </label>
-      <TbInput v-model="input" :placeholder="modeConfig[mode].placeholder" />
+      <TbInput
+        v-model="input"
+        :placeholder="mode === 'decode26' ? decode26InputConfig[decode26Format].placeholder : inputConfig[mode].placeholder"
+      />
     </div>
 
     <WiegandResultDisplay
