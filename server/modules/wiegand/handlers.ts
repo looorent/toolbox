@@ -30,26 +30,17 @@ export async function batchLookupWiegandPlates(request: Request, env: Env, wiega
     const listed = await env.R2.list({ delimiter: '/' })
     const availableCodes = listed.delimitedPrefixes.map(prefix => prefix.replace('/', '')).filter(code => WIEGAND_COUNTRY_CODES.has(code))
 
-    if (signal.aborted) {
-      return new Response(null, { status: 499 })
-    }
-
-    const results = await Promise.all(
-      availableCodes.map(async country => {
-        if (signal.aborted) {
-          return { country, plates: [], error: null }
-        }
-        try {
-          const plates = await findPlatesByWiegand(env, country, wiegand26)
-          return { country, plates: plates ?? [], error: null }
-        } catch {
-          return { country, plates: [], error: 'lookup_failed' }
-        }
-      }),
-    )
-
-    if (signal.aborted) {
-      return new Response(null, { status: 499 })
+    const results = []
+    for (const country of availableCodes) {
+      if (signal.aborted) {
+        return new Response(null, { status: 499 })
+      }
+      try {
+        const plates = await findPlatesByWiegand(env, country, wiegand26)
+        results.push({ country, plates: plates ?? [], error: null })
+      } catch {
+        results.push({ country, plates: [], error: 'lookup_failed' })
+      }
     }
 
     return Response.json({ results })
