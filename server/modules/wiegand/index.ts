@@ -1,1 +1,1 @@
-export { batchLookupWiegandPlates, listWiegandCountries, lookupWiegandPlates } from './handlers'
+export { listWiegandCountries, lookupWiegandPlates } from './handlers'

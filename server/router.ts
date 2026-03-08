@@ -32,7 +32,7 @@ import {
   scimServiceProviderConfig,
 } from './modules/scim'
 import { captureWebhookRequest, createWebhook, deleteWebhook, getWebhook, getWebhookOpenApiSpec, listWebhookRequests } from './modules/webhook'
-import { batchLookupWiegandPlates, listWiegandCountries, lookupWiegandPlates } from './modules/wiegand'
+import { listWiegandCountries, lookupWiegandPlates } from './modules/wiegand'
 
 type Params = Record<string, string | undefined>
 type Handler = (request: Request, env: Env, params: Params, url: URL, ctx: ExecutionContext) => Promise<Response>
@@ -48,7 +48,6 @@ const routes = [
 
   // Wiegand
   route('GET', '/api/wiegand/countries', (_req, env) => listWiegandCountries(env)),
-  route('GET', '/api/wiegand/plates/:wiegandValue', (req, env, params) => batchLookupWiegandPlates(req, env, params.wiegandValue ?? '')),
   route('GET', '/api/wiegand/plates/:wiegandValue/:country', (_req, env, params) => lookupWiegandPlates(env, params.country ?? '', params.wiegandValue ?? '')),
 
   // SCIM server management (UI API)

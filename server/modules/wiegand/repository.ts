@@ -10,11 +10,11 @@ interface ParquetRow {
 
 export async function findPlatesByWiegand(env: Env, country: string, wiegand26: number): Promise<string[] | null> {
   const key = computeR2Key(country, wiegand26)
-  logger.info('[Wiegand] Fetching R2 object: %s', key)
+  logger.info('[Wiegand] Fetching R2 object: ', key)
 
   const head = await env.R2.head(key)
   if (!head) {
-    logger.warn('[Wiegand] R2 object not found: %s', key)
+    logger.warn('[Wiegand] R2 object not found: ', key)
     return null
   }
 

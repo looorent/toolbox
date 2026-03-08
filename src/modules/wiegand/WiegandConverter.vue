@@ -96,6 +96,7 @@ async function convert(): Promise<void> {
     abortController = new AbortController()
     const lookup = await lookupPlatesForAllCountries(
       wiegandResult.decoded.wiegand26InDecimal,
+      supportedCountries.value,
       abortController.signal,
       result => {
         if (generation === convertGeneration) {
