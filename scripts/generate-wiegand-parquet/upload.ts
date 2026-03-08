@@ -70,7 +70,13 @@ export async function uploadToR2(files: string[], countryCode: string, local: bo
       await uploadFileRemote(filepath, countryCode)
     }
     completed++
-    logger.info('  [%d/%d] Uploaded %s (%s)', completed, files.length - skipped, path.basename(filepath), formatFileSize(statSync(filepath).size))
+    logger.info(
+      '  [%d/%d] Uploaded %s (%s)',
+      completed,
+      files.length - skipped,
+      path.basename(filepath),
+      formatFileSize(statSync(filepath).size),
+    )
   }
 
   if (local) {

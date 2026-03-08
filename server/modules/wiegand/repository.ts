@@ -18,6 +18,8 @@ export async function findPlatesByWiegand(env: Env, country: string, wiegand26: 
     return null
   }
 
+  logger.info('[Wiegand] R2 head OK: %s (%d bytes)', key, head.size)
+
   const file = r2AsyncBuffer(env.R2, key, head.size)
   const rows = (await parquetReadObjects({
     file,
@@ -27,8 +29,11 @@ export async function findPlatesByWiegand(env: Env, country: string, wiegand26: 
   })) as ParquetRow[]
 
   if (rows.length > 0) {
-    return rows[0].plates.split(',')
+    const plates = rows[0].plates.split(',')
+    logger.info('[Wiegand] Found %d plate(s) in %s for wiegand26=%d', plates.length, key, wiegand26)
+    return plates
   } else {
+    logger.info('[Wiegand] No match in %s for wiegand26=%d', key, wiegand26)
     return null
   }
 }

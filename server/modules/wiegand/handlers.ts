@@ -24,41 +24,49 @@ export async function batchLookupWiegandPlates(request: Request, env: Env, wiega
     return Response.json({ error: 'invalid_wiegand26_value', value: wiegandValue }, { status: 400 })
   }
 
+  logger.info('[Wiegand] Batch lookup started for wiegand26=%d', wiegand26)
+
   const signal = request.signal
+  const countryCodes = WIEGAND_COUNTRIES.map(country => country.code)
 
-  try {
-    const listed = await env.R2.list({ delimiter: '/' })
-    const availableCodes = listed.delimitedPrefixes.map(prefix => prefix.replace('/', '')).filter(code => WIEGAND_COUNTRY_CODES.has(code))
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    async start(controller) {
+      let processed = 0
+      let found = 0
+      let failed = 0
 
-    const encoder = new TextEncoder()
-    const stream = new ReadableStream({
-      async start(controller) {
-        for (const country of availableCodes) {
-          if (signal.aborted) {
-            controller.close()
-            return
-          }
-          try {
-            const plates = await findPlatesByWiegand(env, country, wiegand26)
-            const line = JSON.stringify({ country, plates: plates ?? [], error: null })
-            controller.enqueue(encoder.encode(`${line}\n`))
-          } catch {
-            const line = JSON.stringify({ country, plates: [], error: 'lookup_failed' })
-            controller.enqueue(encoder.encode(`${line}\n`))
-          }
+      for (const country of countryCodes) {
+        if (signal.aborted) {
+          logger.warn('[Wiegand] Batch lookup aborted after %d/%d countries for wiegand26=%d', processed, countryCodes.length, wiegand26)
+          controller.close()
+          return
         }
-        controller.close()
-      },
-    })
+        try {
+          const plates = await findPlatesByWiegand(env, country, wiegand26)
+          const line = JSON.stringify({ country, plates: plates ?? [], error: null })
+          controller.enqueue(encoder.encode(`${line}\n`))
+          if (plates && plates.length > 0) {
+            found++
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error)
+          logger.error('[Wiegand] Batch lookup failed for %s/wiegand26=%d: %s', country, wiegand26, message)
+          const line = JSON.stringify({ country, plates: [], error: 'lookup_failed' })
+          controller.enqueue(encoder.encode(`${line}\n`))
+          failed++
+        }
+        processed++
+      }
 
-    return new Response(stream, {
-      headers: { 'Content-Type': 'application/x-ndjson' },
-    })
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    logger.error('[Wiegand] Batch lookup failed for %d: %s', wiegand26, message)
-    return Response.json({ error: 'lookup_failed' }, { status: 500 })
-  }
+      logger.info('[Wiegand] Batch lookup complete for wiegand26=%d: %d countries, %d with plates, %d failed', wiegand26, processed, found, failed)
+      controller.close()
+    },
+  })
+
+  return new Response(stream, {
+    headers: { 'Content-Type': 'application/x-ndjson' },
+  })
 }
 
 export async function lookupWiegandPlates(env: Env, country: string, wiegandValue: string): Promise<Response> {
