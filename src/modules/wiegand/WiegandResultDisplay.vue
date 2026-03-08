@@ -94,7 +94,7 @@ const decode26Entries = computed(() => {
             {{ lookup.error }}
           </div>
           <div v-else class="tb-row tb-row--gap-2 tb-row--wrap">
-            <TbTag v-for="plate in lookup.plates" :key="plate" :copyable="plate">
+            <TbTag v-for="plate in lookup.plates.toSorted()" :key="plate" :copyable="plate">
               {{ plate }}
             </TbTag>
           </div>
