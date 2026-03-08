@@ -10,13 +10,13 @@ import { uploadToR2 } from './upload.js'
 const OUTPUT_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'output')
 const TEMP_DIR = path.join(OUTPUT_DIR, 'tmp')
 
-const { country, upload, local } = parseCli()
+const { country, upload, local, force } = parseCli()
 
 async function main(): Promise<void> {
   logger.info('=== Wiegand26 -> License Plate parquet generator ===')
   logger.info('Output directory:', OUTPUT_DIR)
   logger.info('Country:', country.code)
-  logger.info('Upload to R2:', upload, local ? '(local)' : '(remote)')
+  logger.info('Upload to R2:', upload, local ? '(local)' : '(remote)', force ? '(force)' : '')
   logger.info('Ranges:', computeRanges().length)
 
   mkdirSync(OUTPUT_DIR, { recursive: true })
@@ -26,7 +26,7 @@ async function main(): Promise<void> {
   rmSync(TEMP_DIR, { recursive: true })
 
   if (upload) {
-    await uploadToR2(files, country.code, local)
+    await uploadToR2(files, country.code, local, force)
   } else {
     logger.info('Skipping R2 upload (use --upload to enable)')
   }

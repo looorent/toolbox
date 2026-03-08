@@ -7,6 +7,7 @@ export interface CliConfig {
   country: Country
   upload: boolean
   local: boolean
+  force: boolean
 }
 
 export function parseCli(): CliConfig {
@@ -15,6 +16,7 @@ export function parseCli(): CliConfig {
       country: { type: 'string', short: 'c' },
       upload: { type: 'boolean', short: 'u', default: false },
       local: { type: 'boolean', short: 'l', default: false },
+      force: { type: 'boolean', short: 'f', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
     strict: true,
@@ -34,6 +36,7 @@ export function parseCli(): CliConfig {
     country: countriesByCode[countryCode],
     upload: values.upload ?? false,
     local: values.local ?? false,
+    force: values.force ?? false,
   }
 }
 
@@ -46,13 +49,14 @@ Wiegand26 -> License Plate parquet generator
 Generates parquet files mapping Wiegand26 decimal values to license plate texts.
 
 Usage:
-  pnpm run script:generate-wiegand-parquet -- --country <code> [--upload] [--local]
+  pnpm run script:generate-wiegand-parquet -- --country <code> [--upload] [--local] [--force]
   pnpm run script:generate-wiegand-parquet -- --help
 
 Options:
   -c, --country <code>  Country code to process (${AVAILABLE_CODES})
   -u, --upload          Upload generated files to Cloudflare R2
   -l, --local           Upload to local Miniflare R2 (via wrangler) instead of remote (via S3 API)
+  -f, --force           Re-upload files even if they already exist on R2
   -h, --help            Show this help message
 
 Environment variables (required for --upload without --local):

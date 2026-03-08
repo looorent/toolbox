@@ -1,12 +1,13 @@
-import { execFile } from 'node:child_process'
+import { exec, execFile } from 'node:child_process'
 import { createReadStream, statSync } from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
-import { S3Client } from '@aws-sdk/client-s3'
+import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { formatFileSize } from '../../shared/utils/formatFileSize.js'
 import { logger } from '../../shared/utils/logger.js'
 
+const execAsync = promisify(exec)
 const execFileAsync = promisify(execFile)
 
 const R2_BUCKET = 'anpr-wiegand26-registry'
@@ -31,7 +32,7 @@ function createS3Client(): S3Client {
   })
 }
 
-export async function uploadToR2(files: string[], countryCode: string, local: boolean): Promise<void> {
+export async function uploadToR2(files: string[], countryCode: string, local: boolean, force: boolean): Promise<void> {
   const target = local ? 'local (wrangler)' : 'remote (S3 API)'
   if (local) {
     logger.info('=== Uploading %d file(s) to %s R2 bucket %s (sequential) ===', files.length, target, R2_BUCKET)
@@ -40,15 +41,36 @@ export async function uploadToR2(files: string[], countryCode: string, local: bo
   }
 
   let completed = 0
+  let skipped = 0
 
   async function uploadWithCounter(filepath: string): Promise<void> {
+    const key = `${countryCode}/${path.basename(filepath)}`
+
+    if (!force && !local) {
+      const exists = await objectExistsRemote(key)
+      if (exists) {
+        skipped++
+        logger.info('  [skip] %s already exists on R2', key)
+        return
+      }
+    }
+
+    if (!force && local) {
+      const exists = await objectExistsLocal(key)
+      if (exists) {
+        skipped++
+        logger.info('  [skip] %s already exists on local R2', key)
+        return
+      }
+    }
+
     if (local) {
       await uploadFileLocal(filepath, countryCode)
     } else {
       await uploadFileRemote(filepath, countryCode)
     }
     completed++
-    logger.info('  [%d/%d] Uploaded %s (%s)', completed, files.length, path.basename(filepath), formatFileSize(statSync(filepath).size))
+    logger.info('  [%d/%d] Uploaded %s (%s)', completed, files.length - skipped, path.basename(filepath), formatFileSize(statSync(filepath).size))
   }
 
   if (local) {
@@ -76,21 +98,51 @@ export async function uploadToR2(files: string[], countryCode: string, local: bo
     }
   }
 
-  logger.info('=== Upload complete ===')
+  if (skipped > 0) {
+    logger.info('=== Upload complete (%d uploaded, %d skipped) ===', completed, skipped)
+  } else {
+    logger.info('=== Upload complete ===')
+  }
 }
 
 let s3Client: S3Client | null = null
 
-async function uploadFileRemote(filepath: string, countryCode: string): Promise<void> {
+function getS3Client(): S3Client {
   if (!s3Client) {
     s3Client = createS3Client()
   }
+  return s3Client
+}
 
+async function objectExistsRemote(key: string): Promise<boolean> {
+  const client = getS3Client()
+  try {
+    await client.send(new HeadObjectCommand({ Bucket: R2_BUCKET, Key: key }))
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function objectExistsLocal(key: string): Promise<boolean> {
+  const wranglerBin = path.resolve(import.meta.dirname, '../../node_modules/.bin/wrangler')
+  try {
+    await execAsync(`"${wranglerBin}" r2 object get "${R2_BUCKET}/${key}" --local --pipe > /dev/null`, {
+      cwd: path.resolve(import.meta.dirname, '../..'),
+    })
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function uploadFileRemote(filepath: string, countryCode: string): Promise<void> {
+  const client = getS3Client()
   const key = `${countryCode}/${path.basename(filepath)}`
 
   try {
     const upload = new Upload({
-      client: s3Client,
+      client,
       params: {
         Bucket: R2_BUCKET,
         Key: key,
