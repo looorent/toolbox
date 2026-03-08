@@ -32,7 +32,7 @@ export async function batchLookupWiegandPlates(request: Request, env: Env, wiega
 
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
-      async pull(controller) {
+      async start(controller) {
         for (const country of availableCodes) {
           if (signal.aborted) {
             controller.close()
