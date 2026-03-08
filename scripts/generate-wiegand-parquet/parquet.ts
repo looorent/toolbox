@@ -49,6 +49,7 @@ export async function writeParquetFiles(outputDirectory: string, countryCode: st
         { name: 'plates', data: platesValues, type: 'STRING' },
       ],
       codec: 'SNAPPY',
+      rowGroupSize: 4096,
     })
 
     writeFileSync(filepath, new Uint8Array(buffer))

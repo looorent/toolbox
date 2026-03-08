@@ -30,20 +30,30 @@ export async function batchLookupWiegandPlates(request: Request, env: Env, wiega
     const listed = await env.R2.list({ delimiter: '/' })
     const availableCodes = listed.delimitedPrefixes.map(prefix => prefix.replace('/', '')).filter(code => WIEGAND_COUNTRY_CODES.has(code))
 
-    const results = []
-    for (const country of availableCodes) {
-      if (signal.aborted) {
-        return new Response(null, { status: 499 })
-      }
-      try {
-        const plates = await findPlatesByWiegand(env, country, wiegand26)
-        results.push({ country, plates: plates ?? [], error: null })
-      } catch {
-        results.push({ country, plates: [], error: 'lookup_failed' })
-      }
-    }
+    const encoder = new TextEncoder()
+    const stream = new ReadableStream({
+      async pull(controller) {
+        for (const country of availableCodes) {
+          if (signal.aborted) {
+            controller.close()
+            return
+          }
+          try {
+            const plates = await findPlatesByWiegand(env, country, wiegand26)
+            const line = JSON.stringify({ country, plates: plates ?? [], error: null })
+            controller.enqueue(encoder.encode(`${line}\n`))
+          } catch {
+            const line = JSON.stringify({ country, plates: [], error: 'lookup_failed' })
+            controller.enqueue(encoder.encode(`${line}\n`))
+          }
+        }
+        controller.close()
+      },
+    })
 
-    return Response.json({ results })
+    return new Response(stream, {
+      headers: { 'Content-Type': 'application/x-ndjson' },
+    })
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     logger.error('[Wiegand] Batch lookup failed for %d: %s', wiegand26, message)

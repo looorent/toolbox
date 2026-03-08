@@ -92,14 +92,22 @@ async function convert(): Promise<void> {
   if (wiegandResult?.mode === 'decode26' && wiegandResult.decoded) {
     plateLookupLoading.value = true
     plateLookupError.value = null
+    plateLookups.value = []
     abortController = new AbortController()
-    const lookup = await lookupPlatesForAllCountries(wiegandResult.decoded.wiegand26InDecimal, abortController.signal)
+    const lookup = await lookupPlatesForAllCountries(
+      wiegandResult.decoded.wiegand26InDecimal,
+      abortController.signal,
+      result => {
+        if (generation === convertGeneration) {
+          plateLookups.value = [...plateLookups.value, result]
+        }
+      },
+    )
 
     if (generation !== convertGeneration) {
       return
     }
 
-    plateLookups.value = lookup.results
     plateLookupError.value = lookup.error
     plateLookupLoading.value = false
   } else {

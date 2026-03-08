@@ -10,7 +10,7 @@ import { logger } from '../../shared/utils/logger.js'
 const execFileAsync = promisify(execFile)
 
 const R2_BUCKET = 'anpr-wiegand26-registry'
-const CONCURRENCY = 6
+const CONCURRENCY = 1
 
 function createS3Client(): S3Client {
   const accountId = process.env.TOOLBOX_CF_ACCOUNT_ID
