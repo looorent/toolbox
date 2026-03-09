@@ -7,18 +7,18 @@ export interface EncodingWorkerInput {
   sliceIndex: number
 }
 
-export interface ChunkMessage {
+export type WorkerMessage = ChunkMessage | DoneMessage
+
+interface ChunkMessage {
   type: 'chunk'
   pairs: [number, string][]
   count: number
 }
 
-export interface DoneMessage {
+interface DoneMessage {
   type: 'done'
   count: number
 }
-
-export type WorkerMessage = ChunkMessage | DoneMessage
 
 const { countryCode, sliceIndex } = workerData as EncodingWorkerInput
 

@@ -1,11 +1,11 @@
 import { mkdirSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { logger } from '../../shared/utils/logger.js'
-import { parseCli } from './cli.js'
-import { encodeToDisk } from './encoding.js'
-import { computeRanges, writeParquetFiles } from './parquet.js'
-import { uploadToR2 } from './upload.js'
+import { logger } from '../../shared/utils/logger.ts'
+import { parseCli } from './cli.ts'
+import { encodeToDisk } from './encoding.ts'
+import { uploadToR2 } from './upload.ts'
+import { computeOutputRangeCount, writeJsonFiles } from './write.ts'
 
 const OUTPUT_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'output')
 const TEMP_DIR = path.join(OUTPUT_DIR, 'tmp')
@@ -13,16 +13,16 @@ const TEMP_DIR = path.join(OUTPUT_DIR, 'tmp')
 const { country, upload, local, force } = parseCli()
 
 async function main(): Promise<void> {
-  logger.info('=== Wiegand26 -> License Plate parquet generator ===')
+  logger.info('=== Wiegand26 -> License Plate JSON generator ===')
   logger.info('Output directory:', OUTPUT_DIR)
   logger.info('Country:', country.code)
   logger.info('Upload to R2:', upload, local ? '(local)' : '(remote)', force ? '(force)' : '')
-  logger.info('Ranges:', computeRanges().length)
+  logger.info('Output ranges:', computeOutputRangeCount())
 
   mkdirSync(OUTPUT_DIR, { recursive: true })
 
   await encodeToDisk(country, TEMP_DIR)
-  const files = await writeParquetFiles(OUTPUT_DIR, country.code, TEMP_DIR)
+  const files = await writeJsonFiles(OUTPUT_DIR, country.code, TEMP_DIR)
   rmSync(TEMP_DIR, { recursive: true })
 
   if (upload) {
@@ -32,7 +32,7 @@ async function main(): Promise<void> {
   }
 
   logger.info('=== Complete ===')
-  logger.info('Generated', files.length, 'parquet file(s)')
+  logger.info('Generated', files.length, 'JSON file(s)')
 }
 
 try {

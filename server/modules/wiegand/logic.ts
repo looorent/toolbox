@@ -9,6 +9,6 @@ export function computeR2Key(country: string, wiegand26: number): string {
   const rangeIndex = Math.floor(wiegand26 / RANGE_SIZE)
   const start = rangeIndex * RANGE_SIZE
   const end = Math.min((rangeIndex + 1) * RANGE_SIZE - 1, MAX_WIEGAND26_DECIMAL)
-  const filename = `${String(start).padStart(padLength, '0')}-${String(end).padStart(padLength, '0')}_${country}_wiegand_to_text.parquet`
+  const filename = `${String(start).padStart(padLength, '0')}-${String(end).padStart(padLength, '0')}.json`
   return `${country}/${filename}`
 }

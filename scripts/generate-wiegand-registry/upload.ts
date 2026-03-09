@@ -4,14 +4,14 @@ import path from 'node:path'
 import { promisify } from 'node:util'
 import { HeadObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
-import { formatFileSize } from '../../shared/utils/formatFileSize.js'
-import { logger } from '../../shared/utils/logger.js'
+import { formatFileSize } from '../../shared/utils/formatFileSize.ts'
+import { logger } from '../../shared/utils/logger.ts'
 
 const execAsync = promisify(exec)
 const execFileAsync = promisify(execFile)
 
-const R2_BUCKET = 'anpr-wiegand26-registry'
-const CONCURRENCY = 1
+const R2_BUCKET = 'anpr-wiegand26-json-registry'
+const CONCURRENCY = 6
 
 function createS3Client(): S3Client {
   const accountId = process.env.TOOLBOX_CF_ACCOUNT_ID

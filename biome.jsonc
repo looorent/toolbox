@@ -10,7 +10,8 @@
       "*.json",
       "!worker-configuration.d.ts",
       "!src/**/vendor",
-      "scripts/**"
+      "scripts/**",
+      "!scripts/**/output"
     ]
   },
   "formatter": {

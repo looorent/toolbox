@@ -3,23 +3,26 @@ import { availableParallelism } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Worker } from 'node:worker_threads'
-import { RANGE_SIZE } from '../../shared/modules/wiegand/constants.js'
-import { logger } from '../../shared/utils/logger.js'
-import type { Country } from './countries.js'
+import { MAX_WIEGAND26_DECIMAL } from '../../shared/modules/wiegand/constants.ts'
+import { logger } from '../../shared/utils/logger.ts'
+import type { Country } from './countries.ts'
 import type { EncodingWorkerInput, WorkerMessage } from './encoding-worker.ts'
-import { computeRanges } from './parquet.js'
 
 const workerPath = fileURLToPath(new URL('./encoding-worker.ts', import.meta.url))
 
 const LOG_INTERVAL = 1_000_000
 
-export async function encodeToDisk(country: Country, tempDir: string): Promise<void> {
+const ENCODING_PARTITION_SIZE = 524_288 // 2^19 -> 32 TSV files during generation
+export const ENCODING_PARTITION_COUNT = Math.ceil((MAX_WIEGAND26_DECIMAL + 1) / ENCODING_PARTITION_SIZE)
+
+export async function encodeToDisk(country: Country, temporaryDirectory: string): Promise<void> {
   const workerCount = Math.min(availableParallelism(), 8, country.sliceCount)
   logger.info('=== Encoding %s plates (%d workers, %d slices) ===', country.code, workerCount, country.sliceCount)
 
-  mkdirSync(tempDir, { recursive: true })
-  const ranges = computeRanges()
-  const streams = ranges.map((_, index) => createWriteStream(path.join(tempDir, `${index}.tsv`)))
+  mkdirSync(temporaryDirectory, { recursive: true })
+  const streams = Array.from({ length: ENCODING_PARTITION_COUNT }, (_, index) =>
+    createWriteStream(path.join(temporaryDirectory, `${index}.tsv`)),
+  )
 
   const progress = createProgressTracker(country)
 
@@ -76,7 +79,7 @@ function collectResults(
         new Promise<void>((resolve, reject) => {
           worker.on('message', (message: WorkerMessage) => {
             if (message.type === 'chunk') {
-              writeToBuckets(streams, message.pairs)
+              writeToDisk(streams, message.pairs)
               progress.update(sliceIndices[index], message.count)
             } else if (message.type === 'done') {
               progress.update(sliceIndices[index], message.count)
@@ -89,10 +92,10 @@ function collectResults(
   )
 }
 
-function writeToBuckets(streams: WriteStream[], pairs: [number, string][]): void {
+function writeToDisk(streams: WriteStream[], pairs: [number, string][]): void {
   const buckets: string[][] = Array.from({ length: streams.length }, () => [])
   for (const [wiegand, plate] of pairs) {
-    const bucketIndex = Math.floor(wiegand / RANGE_SIZE)
+    const bucketIndex = Math.floor(wiegand / ENCODING_PARTITION_SIZE)
     buckets[bucketIndex].push(`${wiegand}\t${plate}\n`)
   }
   for (let index = 0; index < streams.length; index++) {

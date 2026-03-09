@@ -171,7 +171,7 @@ watch(decode26Format, clearInput)
         Wiegand 26-bit is lossy — multiple plates can map to the same value. When decoding, all possible plates are looked up across the countries below.
       </p>
       <div v-if="supportedCountries.length === 0" class="tb-hint">
-        No countries available yet. Run the parquet generation script for at least one country.
+        No countries available yet. Run the registry generation script for at least one country.
       </div>
       <TbExpandable v-for="country in supportedCountries" :key="country.code" chevron="right">
         <template #header>

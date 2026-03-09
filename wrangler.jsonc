@@ -42,7 +42,7 @@
 	"r2_buckets": [
 		{
 			"binding": "R2",
-			"bucket_name": "anpr-wiegand26-registry"
+			"bucket_name": "anpr-wiegand26-json-registry"
 		}
 	],
 	"triggers": {

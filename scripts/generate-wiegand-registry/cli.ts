@@ -1,5 +1,5 @@
 import { parseArgs } from 'node:util'
-import { type Country, countriesByCode } from './countries.js'
+import { type Country, countriesByCode } from './countries.ts'
 
 const AVAILABLE_CODES = Object.keys(countriesByCode).join(', ')
 
@@ -44,13 +44,13 @@ function printUsage(exitCode: number): never {
   const output = exitCode === 0 ? console.log : console.error
   output(
     `
-Wiegand26 -> License Plate parquet generator
+Wiegand26 -> License Plate registry generator
 
-Generates parquet files mapping Wiegand26 decimal values to license plate texts.
+Generates JSON files mapping Wiegand26 decimal values to license plate texts.
 
 Usage:
-  pnpm run script:generate-wiegand-parquet -- --country <code> [--upload] [--local] [--force]
-  pnpm run script:generate-wiegand-parquet -- --help
+  pnpm run script:generate-wiegand-registry -- --country <code> [--upload] [--local] [--force]
+  pnpm run script:generate-wiegand-registry -- --help
 
 Options:
   -c, --country <code>  Country code to process (${AVAILABLE_CODES})
@@ -65,9 +65,9 @@ Environment variables (required for --upload without --local):
   TOOLBOX_CF_R2_SECRET_ACCESS_KEY R2 API token secret key
 
 Examples:
-  pnpm run script:generate-wiegand-parquet -- --country LU
-  pnpm run script:generate-wiegand-parquet -- -c BE --upload
-  pnpm run script:generate-wiegand-parquet -- -c LU --upload --local
+  pnpm run script:generate-wiegand-registry -- --country LU
+  pnpm run script:generate-wiegand-registry -- -c BE --upload
+  pnpm run script:generate-wiegand-registry -- -c LU --upload --local
 `.trim(),
   )
   process.exit(exitCode)

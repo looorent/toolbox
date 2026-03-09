@@ -1,4 +1,4 @@
-# Wiegand26 Parquet Generator
+# Wiegand26 Registry Generator
 
 ## Why
 
@@ -8,17 +8,17 @@ Given a Wiegand26 decimal value, there is no mathematical way to reverse it back
 
 ## What this script does
 
-This script brute-forces all valid license plates for a country, encodes each one to its Wiegand26 value, and stores the `wiegand → plates` mappings as Parquet files on Cloudflare R2.
+This script brute-forces all valid license plates for a country, encodes each one to its Wiegand26 value, and stores the `wiegand → plates` mappings as JSON files on Cloudflare R2.
 
 These files power the "Decode W26" feature in the Wiegand Converter tool, which looks up a Wiegand value and returns all matching plates for each supported country.
 
 ## How it works
 
-1. **Encoding** — Worker threads generate all valid plates for a country in parallel (sliced by plate prefix). Each worker encodes plates using `anpr-wiegand` and streams `[wiegand, plate]` pairs back to the main thread, which writes them into 32 temporary files bucketed by Wiegand range.
+1. **Encoding** — Worker threads generate all valid plates for a country in parallel (sliced by plate prefix). Each worker encodes plates using `anpr-wiegand` and streams `[wiegand, plate]` pairs back to the main thread, which writes them into 32 temporary TSV files partitioned by Wiegand range.
 
-2. **Parquet writing** — Each temp file is read one at a time, plates sharing the same Wiegand value are grouped, and a Parquet file is written with SNAPPY compression. This keeps memory usage low (~200 MB peak) even for large countries.
+2. **JSON writing** — Each temp file is read one at a time, plates sharing the same Wiegand value are grouped, and small JSON files (one per 1024-value range) are written. This keeps memory usage low (~200 MB peak) even for large countries.
 
-3. **Upload** — Parquet files are uploaded to Cloudflare R2 with concurrent wrangler calls.
+3. **Upload** — JSON files are uploaded to Cloudflare R2.
 
 ## Supported countries
 
@@ -60,7 +60,7 @@ These files power the "Decode W26" feature in the Wiegand Converter tool, which 
 ## Usage
 
 ```bash
-pnpm run script:generate-wiegand-parquet -- --country BE --upload
-pnpm run script:generate-wiegand-parquet -- --country LU --upload --local
-pnpm run script:generate-wiegand-parquet -- --help
+pnpm run script:generate-wiegand-registry -- --country BE --upload
+pnpm run script:generate-wiegand-registry -- --country LU --upload --local
+pnpm run script:generate-wiegand-registry -- --help
 ```

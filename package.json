@@ -1,7 +1,7 @@
 {
   "name": "toolbox",
   "private": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -27,7 +27,7 @@
     "clean:d1": "rm -rf .wrangler/state/v3/d1",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "script:generate-wiegand-parquet": "dotenv -e .dev.vars -- tsx --max-old-space-size=4096 scripts/generate-wiegand-parquet/index.ts"
+    "script:generate-wiegand-registry": "dotenv -e .dev.vars -- tsx --max-old-space-size=4096 scripts/generate-wiegand-registry/index.ts"
   },
   "dependencies": {
     "@codemirror/lang-json": "6.0.2",
@@ -41,8 +41,6 @@
     "colord": "2.9.3",
     "drizzle-orm": "0.45.1",
     "he": "1.2.0",
-    "hyparquet": "1.25.1",
-    "hyparquet-writer": "0.13.0",
     "jsonrepair": "3.13.2",
     "qr-scanner": "1.4.2",
     "qrcode": "1.5.4",
