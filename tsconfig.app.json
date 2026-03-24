@@ -10,13 +10,12 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@components": ["src/components/index.ts"],
-      "@composables/*": ["src/composables/*"],
-      "@modules/*": ["src/modules/*"],
-      "@shared/*": ["shared/*"]
+      "@/*": ["./src/*"],
+      "@components": ["./src/components/index.ts"],
+      "@composables/*": ["./src/composables/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@shared/*": ["./shared/*"]
     }
   },
   "include": ["env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "shared/**/*.ts"],

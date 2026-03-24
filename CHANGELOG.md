@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2026-03-24
+
+* [Technical] Upgrade TypeScript 5.9 → 6.0, Vite 7 → 8, jsdom 28 → 29
+* [Technical] Remove deprecated `baseUrl` from tsconfig files (TS 6 migration)
+* [Technical] Fix `codemirror` package version (was mis-tagged CM5 release)
+
 ## [1.0.8] - 2026-03-24
 
 * [Feature] JWT Forger

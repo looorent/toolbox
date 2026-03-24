@@ -13,6 +13,7 @@ A collection of lightweight, browser-native developer utilities. Fast, private (
 - **Image to SVG**: Convert raster images to SVG vector graphics using VTracer WASM.
 - **JSON Validator**: Format, repair, and validate JSON payloads.
 - **JWT Decoder**: Inspect JSON Web Tokens (header and payload).
+- **JWT Forge**: Create JWT.
 - **Number Converter**: Convert between Decimal, Hex, Binary, and Octal.
 - **PEM Decoder**: Parse and visualize PEM/ASN.1 structures.
 - **QR Code**: Generate and scan QR codes.

@@ -8,12 +8,11 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@composables/*": ["src/composables/*"],
-      "@modules/*": ["src/modules/*"],
-      "@shared/*": ["shared/*"]
+      "@/*": ["./src/*"],
+      "@composables/*": ["./src/composables/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@shared/*": ["./shared/*"]
     }
   },
   "include": ["server/**/*.ts", "shared/**/*.ts", "worker-configuration.d.ts"]

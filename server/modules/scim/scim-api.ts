@@ -601,8 +601,6 @@ export async function scimCountResources(request: Request, env: Env, ctx: Execut
   return buildScimResponse({ userCount, groupCount })
 }
 
-// Re-export types for external use
-export type { ScimUser, ScimGroup }
+export type { ScimGroup, ScimUser }
 
-// Export schema URNs
-export { SCIM_USER_SCHEMA, SCIM_GROUP_SCHEMA }
+export { SCIM_GROUP_SCHEMA, SCIM_USER_SCHEMA }
