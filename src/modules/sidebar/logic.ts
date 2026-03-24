@@ -6,6 +6,7 @@ export const sections: Section[] = [
     tools: [
       { path: '/uuid', name: 'UUID Generator', abbreviation: 'ID' },
       { path: '/qr-code', name: 'QR Code', abbreviation: 'QR' },
+      { path: '/jwt-forge', name: 'JWT Forger', abbreviation: 'JWF' },
     ],
   },
   {

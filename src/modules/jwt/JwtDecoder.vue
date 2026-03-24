@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { TbButton, TbFieldInput } from '@components'
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import JwtClaimSection from './JwtClaimSection.vue'
 import JwtExpirationBanner from './JwtExpirationBanner.vue'
 import JwtSignatureSection from './JwtSignatureSection.vue'
+import JwtSignatureVerifier from './JwtSignatureVerifier.vue'
 import JwtTokenDisplay from './JwtTokenDisplay.vue'
 import { CLAIM_LABELS, decodeJwt, formatClaimValue, formatHeaderValue, HEADER_LABELS, SAMPLE_JWT } from './logic'
 
-const token = ref('')
+const route = useRoute()
+const initialToken = typeof route.query.token === 'string' ? route.query.token : ''
+const token = ref(initialToken)
 
 const decoded = computed(() => decodeJwt(token.value))
 
@@ -61,6 +65,11 @@ function loadSample() {
         />
 
         <JwtSignatureSection v-if="decoded.signature" :signature="decoded.signature" />
+
+        <JwtSignatureVerifier
+          :token="token.trim()"
+          :algorithm="String(decoded.header.alg || 'none')"
+        />
       </template>
     </template>
   </div>

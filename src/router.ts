@@ -5,6 +5,7 @@ const routes = [
   { path: '/', redirect: '/uuid' },
   { path: '/uuid', component: () => import('@modules/uuid/UuidGenerator.vue') },
   { path: '/jwt', component: () => import('@modules/jwt/JwtDecoder.vue') },
+  { path: '/jwt-forge', component: () => import('@modules/jwt/JwtForger.vue') },
   { path: '/pem', component: () => import('@modules/pem/PemDecoder.vue') },
   { path: '/wiegand', component: () => import('@modules/wiegand/WiegandConverter.vue') },
   { path: '/xor', component: () => import('@modules/xor/XorChecksum.vue') },
