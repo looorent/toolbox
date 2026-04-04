@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.10] - 2026-04-04
+
+* [Feature] UUID Generator — UUIDv7 support (generate time-ordered UUIDs, version selector, inline timestamp display)
+* [Feature] UUID Analyzer — paste any UUID to detect its version and extract the embedded timestamp from v7 UUIDs
+
 ## [1.0.9] - 2026-03-24
 
 * [Technical] Upgrade TypeScript 5.9 → 6.0, Vite 7 → 8, jsdom 28 → 29
