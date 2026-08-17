@@ -162,6 +162,29 @@ describe('processWiegand', () => {
 
       expect(result?.mode).toBe('error')
     })
+
+    it('preserves the input decimal value in the decoded result', async () => {
+      const result = await processWiegand('decode26', '3268230', 'decimal')
+
+      expect(result?.mode).toBe('decode26')
+      if (result?.mode === 'decode26') {
+        expect(result.decoded?.wiegand26InDecimal).toBe(3268230)
+      }
+    })
+
+    it('round-trips with encode26 via wiegand26InDecimal', async () => {
+      const encoded = await processWiegand('encode', 'ABC 123')
+      if (encoded?.mode !== 'encode' || !encoded.encoded26) {
+        throw new Error('encode failed')
+      }
+
+      const decoded = await processWiegand('decode26', String(encoded.encoded26.wiegand26InDecimal), 'decimal')
+
+      expect(decoded).toEqual({
+        mode: 'decode26',
+        decoded: encoded.encoded26,
+      })
+    })
   })
 
   describe('decode26 mode — plate format', () => {
