@@ -28,6 +28,21 @@ export async function processWiegand(
   }
 }
 
+// anpr-wiegand only exposes decode26(hex), which strips the 2 parity bits from a raw Wiegand26
+// value but never computes them. Reconstructing correct parity bits here (same algorithm as the
+// library's internal, unexported addParityBits) lets decimal-format input produce an accurate hex.
+function popcount(value: number): number {
+  const withPairSums = value - ((value >> 1) & 0x55555555)
+  const withNibbleSums = (withPairSums & 0x33333333) + ((withPairSums >> 2) & 0x33333333)
+  return (((withNibbleSums + (withNibbleSums >> 4)) & 0x0f0f0f0f) * 0x01010101) >> 24
+}
+
+function addParityBits(payloadShiftedLeftByOne: number): number {
+  const withLeadingParity =
+    popcount((payloadShiftedLeftByOne >> 13) & 0x1fff) % 2 !== 0 ? payloadShiftedLeftByOne | (1 << 25) : payloadShiftedLeftByOne
+  return popcount((withLeadingParity >> 1) & 0xfff) % 2 === 0 ? withLeadingParity | 1 : withLeadingParity
+}
+
 async function decode26WithFormat(input: string, format: Decode26InputFormat): Promise<WiegandDecoded26 | WiegandResult> {
   switch (format) {
     case 'decimal': {
@@ -35,7 +50,8 @@ async function decode26WithFormat(input: string, format: Decode26InputFormat): P
       if (!/^\d+$/.test(input) || !Number.isInteger(asNumber) || asNumber < 0 || asNumber > 16_777_215) {
         return { mode: 'error', error: 'Invalid decimal value (must be 0-16777215)' }
       }
-      const hex = asNumber.toString(16).toUpperCase()
+      const withParityBits = addParityBits(asNumber << 1)
+      const hex = (withParityBits >>> 0).toString(16).toUpperCase().padStart(7, '0')
       return { mode: 'decode26', decoded: (await decode26(hex)) ?? null }
     }
     case 'hex':
